@@ -3,11 +3,17 @@
 **ESP32-C3-powered LED status and progress indicator for 3D printers. Creality K2 is the documented hardware integration; other printer options in recent firmware are experimental.**
 
 ![Project status](https://img.shields.io/badge/status-development-orange)
-![Current OTA](https://img.shields.io/badge/current%20OTA-v2.42-orange)
+![Current OTA](https://img.shields.io/badge/current%20OTA-v2.43-orange)
 ![Historical archive](https://img.shields.io/badge/historical%20archive-v2.16-informational)
 ![Platform](https://img.shields.io/badge/platform-ESP32--C3-green)
 
-> **OTA test candidate: v2.42.** This release is compiled by GitHub Actions and has not yet been tested on a physical ESP32-C3 or printer. v2.41 remains available in Software/ for rollback; v2.16 remains archived.
+> **OTA test candidate: v2.43.** This release is compiled by GitHub Actions and has not yet been tested on a physical ESP32-C3 or printer. v2.42 remains available in Software/ for rollback; v2.16 remains archived.
+
+## v2.43 test candidate
+
+Selecting a state other than Printer reading immediately runs that test on the preview and connected LEDs. Printing progresses by 5% every 0.5 seconds, holds at 100% for one second and repeats. The two playback checkboxes and the manual test-progress slider have been removed; choosing Printer reading resumes live printer status and progress. The browser animates the test locally between its normal status polls.
+
+OTA v2.43: build and checksum pending GitHub Actions.
 
 ## v2.42 test candidate
 

@@ -14,7 +14,7 @@
 
 Tap any colour swatch to open a shared colour chooser. The last eight chosen colours are saved on the LayerGlow device and can be reused for another swatch, stage, browser or after a restart. Pick New colour to open the system colour picker. Existing custom LED colours seed the remembered list on the first upgrade, and LED settings continue saving automatically.
 
-OTA v2.44: build and checksum pending GitHub Actions.
+OTA v2.44: 1,762,992 bytes; SHA-256 `2267906a7aee4c13a86976f23c94169478dc9b1e69c08a7a18759de5d02230c8`.
 
 ## v2.43 test candidate
 

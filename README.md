@@ -14,7 +14,7 @@
 
 Restore the browser's original colour picker when a LED swatch is tapped. Its eight suggested colours include the seven standard shades and the most recently chosen custom colour in place of the white suggestion. Custom colour choices are stored on the device and automatically offered for the next swatch and after a restart. The appearance and placement of suggestions depend on the browser.
 
-OTA v2.45: build and checksum pending GitHub Actions.
+OTA v2.45: 1,759,248 bytes; SHA-256 `339f5aa0292aecc9b5936d94f521854023671e75e236be338220609f486a10e6`.
 
 ## v2.44 test candidate
 

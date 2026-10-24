@@ -1,5 +1,12 @@
 # Historia zmian — LayerGlow
 
+## v2.44 — wersja testowa (24 października 2026)
+
+- Dodano wybór koloru z listą ośmiu zapamiętanych barw, wspólną dla wszystkich próbek i etapów, oraz możliwość ustawienia nowej barwy.
+- Historia jest zapisana w urządzeniu, dostępna po restarcie i w innej przeglądarce. Przy pierwszym uruchomieniu do listy trafiają dotychczasowe niestandardowe kolory LED.
+- Ustawienia LED nadal zapisują się automatycznie; zaktualizowano FAQ w czterech językach.
+- Kompilacja GitHub Actions i test sprzętowy pozostają do wykonania.
+
 ## v2.43 — wersja testowa (24 października 2026)
 
 - Wybór stanu testowego od razu uruchamia test na podglądzie i podłączonym pasku LED. Odczyt z drukarki wyłącza symulację.

@@ -13,7 +13,7 @@
 
 The preview now puts Test state and its compact progress, lit LED count and state on one line, without a tinted status box. Printer reading uses the actual printer state and progress; when the connection is lost, it shows an unavailable reading instead of a stale percentage. The compact mobile preview keeps the line visible while scrolling.
 
-OTA v2.42: build and checksum pending GitHub Actions.
+OTA v2.42: 1,752,048 bytes; SHA-256 `a893b898d54167c55707668b8d8727edf697e21bc502ef6830c738c0c3043e5f`.
 
 ## v2.41 test candidate
 

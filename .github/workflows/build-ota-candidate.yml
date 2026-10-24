@@ -3,7 +3,7 @@ name: Build OTA candidate
 on:
   push:
     branches:
-      - candidate/v2.44
+      - candidate/v2.45
     paths:
       - 'PlatformIO/**'
       - '.github/workflows/build-ota-candidate.yml'
@@ -41,10 +41,10 @@ jobs:
           sha = hashlib.sha256(image).hexdigest()
           folder = Path('Software')
           folder.mkdir(exist_ok=True)
-          (folder / 'LayerGlow_v2_44_OTA.bin').write_bytes(image)
+          (folder / 'LayerGlow_v2_45_OTA.bin').write_bytes(image)
           manifest = {
-              'version': '2.44',
-              'file': 'LayerGlow_v2_44_OTA.bin',
+              'version': '2.45',
+              'file': 'LayerGlow_v2_45_OTA.bin',
               'size': len(image),
               'sha256': sha,
           }
@@ -57,6 +57,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add Software/LayerGlow_v2_44_OTA.bin Software/update.json
-          git commit -m "build: stage v2.44 OTA candidate"
-          git push origin HEAD:candidate/v2.44
+          git add Software/LayerGlow_v2_45_OTA.bin Software/update.json
+          git commit -m "build: stage v2.45 OTA candidate"
+          git push origin HEAD:candidate/v2.45

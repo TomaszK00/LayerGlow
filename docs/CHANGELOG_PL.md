@@ -5,7 +5,7 @@
 - Dodano wybór koloru z listą ośmiu zapamiętanych barw, wspólną dla wszystkich próbek i etapów, oraz możliwość ustawienia nowej barwy.
 - Historia jest zapisana w urządzeniu, dostępna po restarcie i w innej przeglądarce. Przy pierwszym uruchomieniu do listy trafiają dotychczasowe niestandardowe kolory LED.
 - Ustawienia LED nadal zapisują się automatycznie; zaktualizowano FAQ w czterech językach.
-- Kompilacja GitHub Actions i test sprzętowy pozostają do wykonania.
+- Kompilacja GitHub Actions przeszła; test sprzętowy pozostaje do wykonania.
 
 ## v2.43 — wersja testowa (24 października 2026)
 

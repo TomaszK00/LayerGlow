@@ -4,7 +4,7 @@
 
 - Stan testowy, postęp, liczba świecących LED i aktualny stan są w jednym, spokojniejszym wizualnie wierszu podglądu, również w zwiniętym podglądzie mobilnym.
 - Odczyt z drukarki pokazuje rzeczywisty stan i procent; po utracie połączenia nie wyświetla starej wartości jako bieżącego odczytu.
-- Kompilacja GitHub Actions i test sprzętowy pozostają do wykonania.
+- Kompilacja GitHub Actions przeszła; test sprzętowy pozostaje do wykonania.
 
 ## v2.41 — wersja testowa (24 października 2026)
 

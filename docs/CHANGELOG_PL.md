@@ -5,7 +5,7 @@
 - Wybór stanu testowego od razu uruchamia test na podglądzie i podłączonym pasku LED. Odczyt z drukarki wyłącza symulację.
 - Drukowanie zwiększa postęp o 5% co 500 ms, zatrzymuje się przy 100% na sekundę i powtarza. Pozostałe stany pozostają aktywne do zmiany wyboru.
 - Usunięto checkboxy automatycznego postępu i powtarzania oraz ręczny suwak postępu. Podgląd animuje się między zwykłymi odczytami statusu; zaktualizowano FAQ w czterech językach.
-- Kompilacja GitHub Actions i test sprzętowy pozostają do wykonania.
+- Kompilacja GitHub Actions przeszła; test sprzętowy pozostaje do wykonania.
 
 ## v2.42 — wersja testowa (24 października 2026)
 

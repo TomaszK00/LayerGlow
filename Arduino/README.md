@@ -24,7 +24,7 @@ The original Arduino sketches have been recovered from versioned ZIP packages an
 | 2.15 | [K2_Status_Light_v2_15.ino](archive/K2_Status_Light_v2_15.ino) | Original source from versioned firmware ZIP |
 | 2.16 | [K2_Status_Light_v2_16.ino](archive/K2_Status_Light_v2_16.ino) | Original source from versioned firmware ZIP (newer archived build) |
 
-**Current OTA advertised to devices: v2.44 test candidate.** The current [Arduino sketch](LayerGlow_v2_44/LayerGlow_v2_44.ino) includes its bundled PubSubClient source; v2.16 remains in the archive. [Change history](../CHANGELOG.md) documents what changed.
+**Current OTA advertised to devices: v2.45 test candidate.** The current [Arduino sketch](LayerGlow_v2_45/LayerGlow_v2_45.ino) includes its bundled PubSubClient source; v2.16 remains in the archive. [Change history](../CHANGELOG.md) documents what changed.
 
 ## Original ESP32 settings (v2.3 onward)
 

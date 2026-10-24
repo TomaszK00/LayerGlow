@@ -13,7 +13,7 @@
 
 Selecting a state other than Printer reading immediately runs that test on the preview and connected LEDs. Printing progresses by 5% every 0.5 seconds, holds at 100% for one second and repeats. The two playback checkboxes and the manual test-progress slider have been removed; choosing Printer reading resumes live printer status and progress. The browser animates the test locally between its normal status polls.
 
-OTA v2.43: build and checksum pending GitHub Actions.
+OTA v2.43: 1,749,984 bytes; SHA-256 `7fb51423def60d1d069c6e80dd6a10b667ab010c9990e0d41d86276bc6423ec0`.
 
 ## v2.42 test candidate
 

@@ -5,7 +5,7 @@
 - Selecting a test state immediately activates it on the preview and connected LEDs. Printer reading turns the simulation off.
 - Printing now advances by 5% every 500 ms, holds at 100% for 1 second and repeats; other states remain selected until changed.
 - Remove the automatic-progress and repeat checkboxes and the manual test-progress slider. Animate the browser preview between normal status polls and update the FAQ in four languages.
-- GitHub Actions compilation and hardware validation pending.
+- GitHub Actions compilation passed; physical hardware validation remains pending.
 
 ## v2.42 — test candidate (24 October 2026)
 

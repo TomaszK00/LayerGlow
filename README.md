@@ -65,7 +65,7 @@ Features documented in the historical firmware include:
 - Progress display on 12 or 24 addressable LEDs (in pairs).
 - Configurable colours, brightness, flashing patterns, and effects.
 - Browser-based configuration, preview, and LED test tools.
-- Wi-Fi onboarding via `LayerGlow-Setup` in v2.37 (`K2-LED-Setup` on older firmware).
+- Wi-Fi onboarding via `LayerGlow-Setup` in current LayerGlow firmware (`K2-LED-Setup` on older firmware).
 - English, Polish, Spanish, and German UI in developed versions.
 - Manual OTA updates and a GitHub version-check workflow.
 
@@ -73,13 +73,15 @@ Specific functions depend on the installed firmware version. See the [change his
 
 ## Project name and compatibility
 
-**LayerGlow** is the project identity. The repository URL is `TomaszK00/LayerGlow`. v2.37 publishes only a LayerGlow-named OTA image. Firmware older than the LayerGlow updater may need one manual OTA upload before GitHub update detection works. **New printer integrations require testing on each printer model.** See [rename and OTA migration plan](docs/RENAMING_TO_LAYERGLOW.md).
+**LayerGlow** is the project identity. The repository URL is `TomaszK00/LayerGlow`. v2.43 publishes a LayerGlow-named OTA image. Firmware older than the LayerGlow updater may need one manual OTA upload before GitHub update detection works. **New printer integrations require testing on each printer model.** See [rename and OTA migration plan](docs/RENAMING_TO_LAYERGLOW.md).
 
 ## Firmware and source
 
 | Item | Download |
 | --- | --- |
-| **OTA test candidate v2.41** | [LayerGlow .bin](Software/LayerGlow_v2_41_OTA.bin) |
+| **OTA test candidate v2.43** | [LayerGlow .bin](Software/LayerGlow_v2_43_OTA.bin) |
+| **Previous OTA v2.42** | [LayerGlow .bin](Software/LayerGlow_v2_42_OTA.bin) |
+| **Previous OTA v2.41** | [LayerGlow .bin](Software/LayerGlow_v2_41_OTA.bin) |
 | **Previous OTA v2.40** | [LayerGlow .bin](Software/LayerGlow_v2_40_OTA.bin) |
 | **Previous OTA v2.39** | [LayerGlow .bin](Software/LayerGlow_v2_39_OTA.bin) |
 | **Previous OTA v2.38** | [LayerGlow .bin](Software/LayerGlow_v2_38_OTA.bin) |
@@ -95,6 +97,8 @@ Specific functions depend on the installed firmware version. See the [change his
 | **Earlier OTA v2.28** | [LayerGlow .bin](Software/LayerGlow_v2_28_OTA.bin) |
 | **Earlier OTA v2.27** | [LayerGlow .bin](Software/LayerGlow_v2_27_OTA.bin) |
 | **Older OTA v2.15** | [Download .bin](Software/K2_Status_Light_v2_15_OTA.bin) |
+| **Source v2.43** | [Arduino sketch](Arduino/LayerGlow_v2_43/LayerGlow_v2_43.ino) · [PlatformIO project](PlatformIO/) |
+| **Source v2.42** | [Arduino sketch](Arduino/LayerGlow_v2_42/LayerGlow_v2_42.ino) · [PlatformIO project](PlatformIO/) |
 | **Source v2.41** | [Arduino sketch](Arduino/LayerGlow_v2_41/LayerGlow_v2_41.ino) · [PlatformIO project](PlatformIO/) |
 | **Source v2.40** | [Arduino sketch](Arduino/LayerGlow_v2_40/LayerGlow_v2_40.ino) · [PlatformIO project](PlatformIO/) |
 | **Source v2.39** | [Arduino sketch](Arduino/LayerGlow_v2_39/LayerGlow_v2_39.ino) · [PlatformIO project](PlatformIO/) |

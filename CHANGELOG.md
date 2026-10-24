@@ -1,5 +1,12 @@
 # Firmware changelog
 
+## v2.44 — test candidate (24 October 2026)
+
+- Add a colour chooser with eight remembered colours shared across LED swatches and stages, plus the system colour picker for a new colour.
+- Store colour history on the device so it survives a restart and is available from another browser. Seed it from existing custom LED colours on first use.
+- Keep automatic LED settings saving and update the FAQ in all four languages.
+- GitHub Actions compilation and hardware validation pending.
+
 ## v2.43 — test candidate (24 October 2026)
 
 - Selecting a test state immediately activates it on the preview and connected LEDs. Printer reading turns the simulation off.

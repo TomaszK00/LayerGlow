@@ -5,7 +5,7 @@
 - Revert the extra remembered-colour dialog and restore the browser's original native colour picker.
 - Offer the last saved custom colour as the eighth suggested swatch in place of white, alongside seven unchanged preset colours. Store custom selections on the device and reuse them across LED fields.
 - Update the FAQ in four languages; native picker presentation may vary by browser.
-- GitHub Actions compilation and hardware validation pending.
+- GitHub Actions compilation passed; physical hardware validation remains pending.
 
 ## v2.44 — test candidate (24 October 2026)
 

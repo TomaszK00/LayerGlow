@@ -5,7 +5,7 @@
 - Add a colour chooser with eight remembered colours shared across LED swatches and stages, plus the system colour picker for a new colour.
 - Store colour history on the device so it survives a restart and is available from another browser. Seed it from existing custom LED colours on first use.
 - Keep automatic LED settings saving and update the FAQ in all four languages.
-- GitHub Actions compilation and hardware validation pending.
+- GitHub Actions compilation passed; physical hardware validation remains pending.
 
 ## v2.43 — test candidate (24 October 2026)
 

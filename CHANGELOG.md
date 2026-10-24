@@ -4,7 +4,7 @@
 
 - Place Test state, progress, lit LED count and current state on one quiet line in the LED preview, including the compact mobile view.
 - Keep the real printer state and percentage visible when Printer reading is selected; show no live percentage while the printer is disconnected.
-- GitHub Actions compilation and hardware validation pending.
+- GitHub Actions compilation passed; physical hardware validation remains pending.
 
 ## v2.41 — test candidate (24 October 2026)
 

@@ -6,6 +6,7 @@
 ![Current OTA](https://img.shields.io/badge/current%20OTA-v2.43-orange)
 ![Historical archive](https://img.shields.io/badge/historical%20archive-v2.16-informational)
 ![Platform](https://img.shields.io/badge/platform-ESP32--C3-green)
+[![Repository views](https://hits.dwyl.com/TomaszK00/LayerGlow.svg?style=flat-square)](https://hits.dwyl.com/TomaszK00/LayerGlow)
 
 > **OTA test candidate: v2.43.** This release is compiled by GitHub Actions and has not yet been tested on a physical ESP32-C3 or printer. v2.42 remains available in Software/ for rollback; v2.16 remains archived.
 

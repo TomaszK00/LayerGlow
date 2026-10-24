@@ -4,16 +4,16 @@
 
 Original packaged firmware and source files target **ESP32-C3 SuperMini / ESP32C3 Dev Module** (4 MB flash), with a SK6812 RGBW strip and local Moonraker communication to a Creality K2. Consult [hardware notes](HARDWARE.md) before connecting power.
 
-The current OTA manifest points to the **v2.41 test candidate**, whose [Arduino source is available](../Arduino/LayerGlow_v2_41/LayerGlow_v2_41.ino). The original v2.3 first-flash image and v2.15 source remain historical references; v2.16 remains archived.
+The current OTA manifest points to the **v2.42 test candidate**, whose [Arduino source is available](../Arduino/LayerGlow_v2_42/LayerGlow_v2_42.ino). The original v2.3 first-flash image and v2.15 source remain historical references; v2.16 remains archived.
 
 ## Option A — upgrade an already running compatible device
 
 1. Confirm the installed firmware includes a functional OTA update page and that the board has sufficient OTA app partition space.
 2. Open the device's web interface on the trusted local network.
-3. Use the firmware update control to select the compatible [LayerGlow v2.41 OTA binary](../Software/LayerGlow_v2_41_OTA.bin), or follow the firmware's GitHub-update workflow. An older installed version may need one manual OTA upload after the repository rename.
+3. Use the firmware update control to select the compatible [LayerGlow v2.42 OTA binary](../Software/LayerGlow_v2_42_OTA.bin), or follow the firmware's GitHub-update workflow. An older installed version may need one manual OTA upload after the repository rename.
 4. Keep power stable throughout upload, validation and restart.
 
-**Do not flash an OTA image directly at address 0x0** as if it were a full USB image. The current v2.41 firmware is a test candidate: its build and checksum are checked, but installation on the physical board still requires verification.
+**Do not flash an OTA image directly at address 0x0** as if it were a full USB image. The current v2.42 firmware is a test candidate: its build and checksum are checked, but installation on the physical board still requires verification.
 
 ## Option B — first-time flash using the original v2.3 USB image
 
@@ -37,7 +37,7 @@ After first installation, follow the AP setup flow and use compatible OTA update
 1. Install **Arduino IDE 2.x**.
 2. Install the **ESP32 boards package by Espressif Systems**.
 3. Install **ArduinoJson v7** and **Adafruit NeoPixel** using Library Manager. The current LayerGlow sketch includes PubSubClient in its `src/` folder.
-4. Download the [current LayerGlow v2.41 sketch](../Arduino/LayerGlow_v2_41/LayerGlow_v2_41.ino) with its complete `src/` folder, or select a historical [Arduino source](../Arduino/README.md).
+4. Download the [current LayerGlow v2.42 sketch](../Arduino/LayerGlow_v2_42/LayerGlow_v2_42.ino) with its complete `src/` folder, or select a historical [Arduino source](../Arduino/README.md).
 5. Select **ESP32C3 Dev Module**, 4 MB flash, USB CDC On Boot enabled if available, and an OTA-compatible layout such as **Minimal SPIFFS (1.9 MB APP with OTA)**.
 6. Confirm GPIO4, LED model, power, printer IP and any network/security settings match your real build.
 7. Compile, inspect warnings, and upload over USB. If changing partition layouts, expect to need reconfiguration afterwards.

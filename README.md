@@ -3,12 +3,18 @@
 **ESP32-C3-powered LED status and progress indicator for 3D printers. Creality K2 is the documented hardware integration; other printer options in recent firmware are experimental.**
 
 ![Project status](https://img.shields.io/badge/status-development-orange)
-![Current OTA](https://img.shields.io/badge/current%20OTA-v2.43-orange)
+![Current OTA](https://img.shields.io/badge/current%20OTA-v2.44-orange)
 ![Historical archive](https://img.shields.io/badge/historical%20archive-v2.16-informational)
 ![Platform](https://img.shields.io/badge/platform-ESP32--C3-green)
 [![Repository views](https://hits.dwyl.com/TomaszK00/LayerGlow.svg?style=flat-square)](https://hits.dwyl.com/TomaszK00/LayerGlow)
 
-> **OTA test candidate: v2.43.** This release is compiled by GitHub Actions and has not yet been tested on a physical ESP32-C3 or printer. v2.42 remains available in Software/ for rollback; v2.16 remains archived.
+> **OTA test candidate: v2.44.** This release is compiled by GitHub Actions and has not yet been tested on a physical ESP32-C3 or printer. v2.43 remains available in Software/ for rollback; v2.16 remains archived.
+
+## v2.44 test candidate
+
+Tap any colour swatch to open a shared colour chooser. The last eight chosen colours are saved on the LayerGlow device and can be reused for another swatch, stage, browser or after a restart. Pick New colour to open the system colour picker. Existing custom LED colours seed the remembered list on the first upgrade, and LED settings continue saving automatically.
+
+OTA v2.44: build and checksum pending GitHub Actions.
 
 ## v2.43 test candidate
 

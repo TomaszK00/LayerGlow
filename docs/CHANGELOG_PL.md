@@ -1,5 +1,11 @@
 # Historia zmian — LayerGlow
 
+## v2.42 — wersja testowa (24 października 2026)
+
+- Stan testowy, postęp, liczba świecących LED i aktualny stan są w jednym, spokojniejszym wizualnie wierszu podglądu, również w zwiniętym podglądzie mobilnym.
+- Odczyt z drukarki pokazuje rzeczywisty stan i procent; po utracie połączenia nie wyświetla starej wartości jako bieżącego odczytu.
+- Kompilacja GitHub Actions i test sprzętowy pozostają do wykonania.
+
 ## v2.41 — wersja testowa (24 października 2026)
 
 - Dodano Odczyt z drukarki do listy Stan testowy. Ten wybór wyłącza symulację; każdy inny stan włącza test podglądu i podłączonego paska.

@@ -5,7 +5,7 @@
 - Usunięto dodatkowe okno zapamiętanych kolorów i przywrócono wcześniejszy systemowy wybierak przeglądarki.
 - Ostatni własny kolor jest proponowany jako ósma próbka zamiast białego, obok siedmiu stałych barw. Własny kolor zapisuje się w urządzeniu i można go ponownie użyć w innym polu LED.
 - Zaktualizowano FAQ w czterech językach; wygląd wybieraka zależy od przeglądarki.
-- Kompilacja GitHub Actions i test sprzętowy pozostają do wykonania.
+- Kompilacja GitHub Actions przeszła; test sprzętowy pozostaje do wykonania.
 
 ## v2.44 — wersja testowa (24 października 2026)
 

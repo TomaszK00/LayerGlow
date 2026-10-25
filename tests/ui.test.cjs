@@ -23,7 +23,13 @@ function panel(status=fixture()){
   w.fetch=async(url,options={})=>{
    calls.push({url:String(url),options});let body={};
    if(String(url).startsWith('/api/status'))body=JSON.parse(JSON.stringify(status));
-   else if(url==='/api/colours/recent'){
+   else if(url==='/api/printers/saved'||url==='/api/network/info')body={savedPrinters:JSON.parse(JSON.stringify(status.savedPrinters||[])),printerProfileStorageOK:true};
+   else if(url==='/api/printers/select'||url==='/api/printers/delete'){
+    const id=new URLSearchParams(options.body.toString()).get('id');
+    if(url.endsWith('/delete'))status.savedPrinters=status.savedPrinters.filter(p=>p.id!==id);
+    else status.savedPrinters.forEach(p=>{p.active=p.id===id;p.enabled=p.active;p.connected=false});
+    body={ok:true};
+   }else if(url==='/api/colours/recent'){
     const colour=new URLSearchParams(options.body.toString()).get('colour');status.recentColours=[colour,...status.recentColours.filter(x=>x!==colour)].slice(0,8);body={recentColours:status.recentColours};
    }else if(url==='/api/simulation'){
     const values=new URLSearchParams(options.body.toString());status.sim=values.get('enabled')==='1';status.simState=values.get('status');body={ok:true};
@@ -73,6 +79,29 @@ test('live printer data is labelled in every language and visually distinct from
   assert.equal(select.classList.contains('live-reading'),true);assert.deepEqual(p.errors,[]);
  }finally{p.dom.window.close();}
 });
+
+test('saved printers render metadata safely and keep editing separate from connection',async()=>{
+ const status=fixture();status.savedPrinters=[
+  {id:'00000001',name:'<img src=x onerror=1>',type:'bambu',ip:'192.168.1.10',port:8883,mac:'AA:BB:CC:DD:EE:FF',serial:'SERIAL01',network:'Home',hasSecret:true,active:true,enabled:true,connected:false},
+  {id:'00000002',name:'Second Bambu',type:'bambu',ip:'192.168.1.11',port:8883,mac:'',serial:'SERIAL02',network:'Studio',hasSecret:true,active:false,enabled:false,connected:false}
+ ];
+ const p=panel(status);try{
+  await pause(30);const w=p.dom.window,d=w.document;await w.eval('refreshSavedPrinters()');
+  const rows=d.querySelectorAll('.saved-printer');assert.equal(rows.length,2);
+  assert.equal(rows[0].querySelector('img'),null);assert.match(rows[0].textContent,/AA:BB:CC:DD:EE:FF/);assert.match(rows[1].textContent,/192.168.1.11:8883/);
+  rows[1].querySelector('[data-action=edit]').click();
+  assert.equal(d.getElementById('profileId').value,'00000002');assert.equal(d.getElementById('bambuSerial').value,'SERIAL02');assert.equal(d.getElementById('bambuCode').required,false);
+  assert.equal(p.calls.filter(c=>c.url==='/api/printers/select').length,0);
+  d.getElementById('addPrinter').click();assert.equal(d.getElementById('profileId').value,'');assert.equal(d.getElementById('printerMAC').value,'');
+  d.getElementById('printerType').value='bambu';w.eval('printerTypeChanged(true)');assert.equal(d.getElementById('bambuCode').required,true);
+  await w.eval('savedPrinterAction("select","00000002")');
+  assert.equal(d.getElementById('profileId').value,'00000002');assert.equal(d.getElementById('ip').value,'192.168.1.11');
+  assert.equal(status.savedPrinters[1].active,true);
+  await w.eval('savedPrinterAction("delete","00000001")');assert.equal(d.querySelectorAll('.saved-printer').length,1);
+  assert.equal(d.getElementById('profileId').value,'00000002');assert.deepEqual(p.errors,[]);
+ }finally{p.dom.window.close();}
+});
+
 test('OTA needs evidence of restart and the requested version',()=>{
  const fn=vm.runInNewContext(script.slice(script.indexOf('function firmwareRestarted('),script.indexOf('async function waitForRestart('))+'\nfirmwareRestarted');
  const before={version:'2.46',bootId:'old',uptimeSeconds:100};

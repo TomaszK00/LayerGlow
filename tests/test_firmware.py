@@ -38,7 +38,13 @@ class FirmwareTests(unittest.TestCase):
     def test_connection_storage_origin_and_ota_regressions(self):
         harness = (ROOT / 'tests/firmware_harness.cpp').read_text()
         names = ('storeString','storeInt','storeByte','storePort','storeBool','removeStored','saveWifiSettings','savePrinterSettings','saveLighting','markPrinterOffline','maintainBambu','maintainNetwork','allowMutation')
-        code = '\n'.join(function(name) for name in names)
+        profile_start = SOURCE.index('constexpr uint8_t MAX_PRINTER_PROFILES')
+        profile_end = SOURCE.index('WiFiClientSecure bambuTLS;', profile_start)
+        code = SOURCE[profile_start:profile_end]
+        code += '\n' + '\n'.join(function(name) for name in ('validPrinterProfile','readPrinterProfileBlob','writePrinterProfileBlob','applySavedPrinter'))
+        # savedPrinterIndex returns int rather than bool/void.
+        code += '\n' + SOURCE[SOURCE.index('int savedPrinterIndex('):SOURCE.index('bool readPrinterProfileBlob(')]
+        code += '\n' + '\n'.join(function(name) for name in names)
         structs = SOURCE[SOURCE.index('struct HttpPrinterRequest'):SOURCE.index('void readHttpPrinter(')]
         code += '\n' + structs + '\n' + function('maintainHttpPrinter')
         ota_start = SOURCE.index('  server.on("/api/update",HTTP_POST')

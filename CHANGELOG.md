@@ -1,5 +1,14 @@
 # Firmware changelog
 
+## v2.48 — saved printer profiles (25 October 2026)
+
+- Save up to 8 named printers with IP/port, adapter, optional manually supplied MAC, Bambu serial and Wi-Fi at save time.
+- Connect, edit and delete individual profiles. Disconnect retains them; removing the active printer stops reads without selecting another.
+- Keep LAN/API credentials isolated per profile; never expose secrets in list responses.
+- Persist profiles, active selection and enabled flag together in one NVS blob; import the selected legacy printer once.
+- Add four-language help and regression scenarios for storage failures, restart, selection and profile editing. Hardware validation remains pending.
+
+
 ## v2.47 — interface refinements (25 October 2026)
 
 - Opening brightness or pulse closes the previous LED adjustment, across all stages.
@@ -145,7 +154,7 @@
 
 Release descriptions are based on the README files included with the original firmware packages and on preserved repository history. They document **why each build was prepared**, not a claim that every feature was independently tested on physical hardware.
 
-**Published automatic OTA target:** v2.47 test candidate via [`Software/update.json`](Software/update.json). v2.16 is a separately archived historical build.
+**Published automatic OTA target:** v2.48 test candidate via [`Software/update.json`](Software/update.json). v2.16 is a separately archived historical build.
 
 | Version | Why it was created / main changes | Files |
 | --- | --- | --- |

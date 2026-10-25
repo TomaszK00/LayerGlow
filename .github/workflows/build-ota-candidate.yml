@@ -45,34 +45,37 @@ jobs:
         if: startsWith(github.ref, 'refs/heads/candidate/') && github.event_name != 'pull_request'
         env:
           CANDIDATE_BRANCH: ${{ github.ref_name }}
+          SIGNING_KEY: ${{ secrets.LAYERGLOW_OTA_SIGNING_KEY }}
         run: |
           python - <<'PY'
-          import hashlib, json, os, re
+          import os, re, subprocess, tempfile
           from pathlib import Path
           source = Path('PlatformIO/src/main.cpp').read_text()
           version = re.search(r'// LayerGlow v(\d+\.\d+)', source).group(1)
           if os.environ['CANDIDATE_BRANCH'] != f'candidate/v{version}':
               raise SystemExit('Candidate branch and source version differ')
-          image = Path('PlatformIO/.pio/build/esp32c3/firmware.bin').read_bytes()
-          if not 100_000 < len(image) <= 1_900_000 or image[0] != 0xe9:
-              raise SystemExit(f'Unexpected ESP32 image: {len(image)} bytes')
-          name = 'LayerGlow_v' + version.replace('.', '_') + '_OTA.bin'
-          folder = Path('Software'); folder.mkdir(exist_ok=True)
-          (folder / name).write_bytes(image)
-          manifest = {'version': version, 'file': name, 'size': len(image), 'sha256': hashlib.sha256(image).hexdigest()}
-          (folder / 'update.json').write_text(json.dumps(manifest, indent=2) + '\n')
-          with open(os.environ['GITHUB_ENV'], 'a') as output:
-              output.write('OTA_FILE=' + name + '\n')
-          print(json.dumps(manifest))
+          if not os.environ.get('SIGNING_KEY'):
+              print('No signing secret: compile and tests completed; candidate OTA is not staged.')
+          else:
+              with tempfile.TemporaryDirectory() as folder:
+                  key = Path(folder) / 'private.pem'
+                  key.write_text(os.environ['SIGNING_KEY'])
+                  key.chmod(0o600)
+                  subprocess.run(['python', 'security/sign_ota.py',
+                                  '--image', 'PlatformIO/.pio/build/esp32c3/firmware.bin',
+                                  '--key', str(key), '--version', version], check=True)
+              with open(os.environ['GITHUB_ENV'], 'a') as output:
+                  output.write('OTA_FILE=LayerGlow_v' + version.replace('.', '_') + '_OTA.bin\n')
           PY
       - name: Keep compiled candidate on its own branch
         if: startsWith(github.ref, 'refs/heads/candidate/') && github.event_name != 'pull_request'
         env:
           CANDIDATE_BRANCH: ${{ github.ref_name }}
         run: |
+          if [ -z "$OTA_FILE" ]; then exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "Software/$OTA_FILE" Software/update.json
+          git add "Software/$OTA_FILE" "Software/$OTA_FILE.sig" Software/update.json
           if git diff --cached --quiet; then exit 0; fi
           git commit -m "build: stage $OTA_FILE"
           git push origin "HEAD:$CANDIDATE_BRANCH"

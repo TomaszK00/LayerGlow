@@ -85,17 +85,26 @@ bool rowPulse[6]={},rowEnabled[6]={};uint16_t rowPeriod[6]={};int activeLedCount
 constexpr int HTTP_POST=1,UPLOAD_FILE_START=0,UPLOAD_FILE_WRITE=1,UPLOAD_FILE_END=2,UPLOAD_FILE_ABORTED=3;
 struct HTTPUpload{int status=0;String filename;uint8_t buf[32]={};size_t currentSize=0;} upload;
 struct FakeServer{
- String host="layerglow.local",origin="http://layerglow.local",message;int code=0;std::function<void()> complete,chunk;
- String hostHeader(){return host;}String header(const char*){return origin;}
+ String host="layerglow.local",origin="http://layerglow.local",signature,message;int code=0;std::function<void()> complete,chunk;
+ String hostHeader(){return host;}String header(const char* name){return strcmp(name,"X-LayerGlow-Signature")==0?signature:origin;}
  void send(int c,const char*,const String& m){code=c;message=m;}HTTPUpload& upload(){return ::upload;}
  void on(const char*,int,std::function<void()> c,std::function<void()> h){complete=c;chunk=h;}
 } server;
 constexpr int UPDATE_SIZE_UNKNOWN=0,U_FLASH=0;
-struct {bool error=false,started=false,finished=false;int begins=0;bool hasError(){return error;}String errorString(){return "write failed";}
+struct {bool error=false,started=false,finished=false;int begins=0,ends=0;bool hasError(){return error;}String errorString(){return "write failed";}
  bool begin(int,int){begins++;started=true;return true;}size_t write(uint8_t*,size_t n){return n;}
- bool end(bool){finished=true;return true;}void abort(){started=false;finished=false;}
+ bool end(bool){ends++;finished=true;return true;}void abort(){started=false;finished=false;}
 } Update;
 bool otaImageReady=false;size_t otaBytesWritten=0;String updateError;
+bool adminAllowed=true,signatureAllowed=true,otaHashStarted=false,otaSignatureValid=false;
+bool requireAdmin(bool=true){return adminAllowed;}
+uint8_t otaSignature[256];size_t otaSignatureLength=0;
+struct mbedtls_sha256_context{} otaHash;
+void mbedtls_sha256_init(mbedtls_sha256_context*){}void mbedtls_sha256_free(mbedtls_sha256_context*){}
+void mbedtls_sha256_starts(mbedtls_sha256_context*,int){}void mbedtls_sha256_update(mbedtls_sha256_context*,const uint8_t*,size_t){}
+void mbedtls_sha256_finish(mbedtls_sha256_context*,uint8_t* digest){memset(digest,0,32);}
+int mbedtls_base64_decode(uint8_t* dst,size_t,size_t* n,const uint8_t*,size_t){memset(dst,0,256);*n=256;return 0;}
+bool verifyOtaSignature(const uint8_t*){return signatureAllowed&&otaSignatureValid&&otaSignatureLength==256;}
 struct {int restarts=0;void restart(){restarts++;}} ESP;void delay(int){}
 struct FakeQueue{std::any item;};using QueueHandle_t=FakeQueue*;constexpr int pdTRUE=1;
 template<class T>int xQueueReceive(QueueHandle_t queue,T* result,int){if(!queue->item.has_value())return 0;*result=std::any_cast<T>(queue->item);queue->item.reset();return pdTRUE;}
@@ -153,9 +162,13 @@ int main(){
  // Origin/Host guard rejects external pages and DNS rebinding hosts.
  assert(allowMutation());server.origin="http://evil.example";assert(!allowMutation()&&server.code==403);
  server.origin="";assert(allowMutation());server.host="evil.example";assert(!allowMutation());server.host="192.168.4.1";assert(allowMutation());
+ adminAllowed=false;assert(!allowMutation());adminAllowed=true;
  // OTA: no file/aborted/empty upload cannot restart; uppercase .BIN can finish.
  server.host="layerglow.local";server.origin="http://layerglow.local";registerOta();server.complete();assert(ESP.restarts==0&&server.code==500);
+ upload.status=UPLOAD_FILE_START;upload.filename="test.BIN";server.chunk();assert(Update.begins==0);upload.status=UPLOAD_FILE_END;server.chunk();server.complete();assert(ESP.restarts==0);
+ server.signature=String(344,'A');
  upload.status=UPLOAD_FILE_START;upload.filename="test.BIN";server.chunk();upload.status=UPLOAD_FILE_WRITE;upload.currentSize=16;server.chunk();upload.status=UPLOAD_FILE_END;server.chunk();server.complete();assert(ESP.restarts==1&&server.code==200);
+ signatureAllowed=false;upload.status=UPLOAD_FILE_START;server.chunk();upload.status=UPLOAD_FILE_WRITE;server.chunk();upload.status=UPLOAD_FILE_END;server.chunk();server.complete();assert(ESP.restarts==1&&server.code==500&&Update.ends==1);signatureAllowed=true;
  server.complete();assert(ESP.restarts==1&&server.code==500);
  upload.status=UPLOAD_FILE_START;server.chunk();upload.status=UPLOAD_FILE_ABORTED;server.chunk();server.complete();assert(ESP.restarts==1&&!otaUploadInProgress);
  upload.status=UPLOAD_FILE_START;server.chunk();upload.status=UPLOAD_FILE_END;server.chunk();server.complete();assert(ESP.restarts==1);

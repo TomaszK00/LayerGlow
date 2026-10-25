@@ -26,6 +26,8 @@ The original Arduino sketches have been recovered from versioned ZIP packages an
 
 **Current OTA advertised to devices: v2.45 test candidate.** The current [Arduino sketch](LayerGlow_v2_45/LayerGlow_v2_45.ino) includes its bundled PubSubClient source; v2.16 remains in the archive. [Change history](../CHANGELOG.md) documents what changed.
 
+The separate [v2.46 candidate sketch](LayerGlow_v2_46/LayerGlow_v2_46.ino) contains the audit fixes and has its own bundled MQTT sources. It is not advertised by the public updater until hardware validation.
+
 ## Original ESP32 settings (v2.3 onward)
 
 Original build notes target ESP32-C3 SuperMini (ESP32C3 Dev Module in Arduino IDE), 4 MB flash, USB CDC on Boot enabled and a compatible OTA partition layout such as **Minimal SPIFFS (1.9MB APP with OTA)**. Installed libraries include ArduinoJson 7 and Adafruit NeoPixel.

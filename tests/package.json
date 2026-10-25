@@ -1,0 +1,7 @@
+{
+  "name": "layerglow-regression-tests",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {"test": "node --test ui.test.cjs"},
+  "devDependencies": {"jsdom": "26.1.0"}
+}

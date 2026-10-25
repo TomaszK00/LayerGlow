@@ -1288,6 +1288,8 @@ struct HttpPrinterResult {uint32_t revision,readAt;bool connected;float progress
 QueueHandle_t httpPrinterRequests=nullptr,httpPrinterResults=nullptr;
 bool httpPrinterPending=false;
 void markPrinterOffline(const String& reason);
+// Explicit declaration also keeps Arduino sketch prototype generation type-safe.
+void readHttpPrinter(const HttpPrinterRequest& config,HttpPrinterResult& result);
 void readHttpPrinter(const HttpPrinterRequest& config,HttpPrinterResult& result){
   result={};result.revision=config.revision;
   WiFiClient client;HTTPClient http;

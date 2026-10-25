@@ -4,6 +4,7 @@ import re
 import subprocess
 import tempfile
 import unittest
+import zipfile
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 SOURCE = (ROOT / 'PlatformIO/src/main.cpp').read_text()
@@ -26,6 +27,12 @@ class FirmwareTests(unittest.TestCase):
         self.assertEqual(SOURCE, (ROOT / 'Arduino/LayerGlow_v2_46/LayerGlow_v2_46.ino').read_text())
         for name in ('PubSubClient.cpp', 'PubSubClient.h'):
             self.assertEqual((ROOT / 'PlatformIO/src/src' / name).read_bytes(), (ROOT / 'Arduino/LayerGlow_v2_46/src' / name).read_bytes())
+
+    def test_source_zip_matches_sketch(self):
+        with zipfile.ZipFile(ROOT / 'Software/LayerGlow_v2_46.zip') as archive:
+            self.assertEqual(SOURCE, archive.read('LayerGlow_v2_46/LayerGlow_v2_46.ino').decode())
+            for name in ('PubSubClient.cpp', 'PubSubClient.h', 'PubSubClient-LICENSE.txt'):
+                self.assertEqual((ROOT / 'Arduino/LayerGlow_v2_46/src' / name).read_bytes(), archive.read('LayerGlow_v2_46/src/' + name))
 
     def test_connection_storage_origin_and_ota_regressions(self):
         harness = (ROOT / 'tests/firmware_harness.cpp').read_text()

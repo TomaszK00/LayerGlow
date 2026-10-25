@@ -2,7 +2,7 @@
 
 ## Current status
 
-The public OTA manifest advertises v2.50 as a test candidate. It adds same-origin/Host checks and fixes update completion handling, but **it is not an authenticated or security-certified product**.
+The public OTA manifest advertises v2.51 as a test candidate. It adds same-origin/Host checks and fixes update completion handling, but **it is not an authenticated or security-certified product**.
 
 The local web/OTA interface has no administrator login, the recovery AP uses a shared default password, and Bambu MQTT currently disables server-certificate validation. Same-origin checks reduce browser cross-site writes; they do not stop an untrusted client already on the local network. No signed-firmware verification or automatic rollback acceptance gate is configured by this project.
 

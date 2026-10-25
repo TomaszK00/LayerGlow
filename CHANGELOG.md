@@ -1,5 +1,13 @@
 # Firmware changelog
 
+## v2.50 — printer panel cleanup (25 October 2026)
+
+- Remove Edit action and visible printer name/MAC fields; new profiles receive a type/IP name or the discovered name.
+- Move Disconnect printer beside connection details and remove repeated saved/disconnected notices.
+- Move profile instructions from the panel and Network FAQ to the Printer FAQ in four languages.
+- Saved profile data, credentials and connection protocols remain unchanged.
+
+
 ## v2.48 — saved printer profiles (25 October 2026)
 
 - Save up to 8 named printers with IP/port, adapter, optional manually supplied MAC, Bambu serial and Wi-Fi at save time.
@@ -154,7 +162,7 @@
 
 Release descriptions are based on the README files included with the original firmware packages and on preserved repository history. They document **why each build was prepared**, not a claim that every feature was independently tested on physical hardware.
 
-**Published automatic OTA target:** v2.48 test candidate via [`Software/update.json`](Software/update.json). v2.16 is a separately archived historical build.
+**Published automatic OTA target:** v2.50 test candidate via [`Software/update.json`](Software/update.json). v2.16 is a separately archived historical build.
 
 | Version | Why it was created / main changes | Files |
 | --- | --- | --- |

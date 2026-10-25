@@ -45,6 +45,34 @@ test('embedded scripts parse; all four languages cover the UI and FAQ',()=>{
   assert.deepEqual(FAQ[lang].sections.map(x=>x[1].length),FAQ.en.sections.map(x=>x[1].length));
  }
 });
+test('LED adjustments are exclusive and preserve their selected values',async()=>{
+ const p=panel();try{
+  await pause(30);const d=p.dom.window.document;
+  const pulse=d.getElementById('pp_progress').closest('details');
+  const brightness=d.getElementById('b_progress').closest('details');
+  const other=d.getElementById('pp_heating').closest('details');
+  pulse.open=true;await pause(10);brightness.open=true;await pause(10);
+  assert.equal(pulse.open,false);assert.equal(brightness.open,true);
+  other.open=true;await pause(10);
+  assert.equal(brightness.open,false);assert.equal(other.open,true);
+  assert.equal(d.getElementById('pp_progress').value,'1400');
+  assert.equal(d.getElementById('b_progress').value,'65');assert.deepEqual(p.errors,[]);
+ }finally{p.dom.window.close();}
+});
+test('live printer data is labelled in every language and visually distinct from simulation',async()=>{
+ const p=panel();try{
+  await pause(30);const w=p.dom.window,d=w.document,select=d.getElementById('testStatus');
+  for(const language of ['en','pl','es','de']){
+   w.eval('setLang('+JSON.stringify(language)+')');
+   assert.match(select.options[0].textContent,/^● /);
+  }
+  assert.equal(select.classList.contains('live-reading'),true);
+  select.value='printing';select.dispatchEvent(new w.Event('change',{bubbles:true}));await pause(150);
+  assert.equal(select.classList.contains('live-reading'),false);
+  select.value='printer';select.dispatchEvent(new w.Event('change',{bubbles:true}));await pause(150);
+  assert.equal(select.classList.contains('live-reading'),true);assert.deepEqual(p.errors,[]);
+ }finally{p.dom.window.close();}
+});
 test('OTA needs evidence of restart and the requested version',()=>{
  const fn=vm.runInNewContext(script.slice(script.indexOf('function firmwareRestarted('),script.indexOf('async function waitForRestart('))+'\nfirmwareRestarted');
  const before={version:'2.46',bootId:'old',uptimeSeconds:100};

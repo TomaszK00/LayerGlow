@@ -4,6 +4,8 @@
 #include <cctype>
 #include <cstdint>
 #include <cstring>
+#include <cstdlib>
+#include <cstdio>
 #include <functional>
 #include <iostream>
 #include <map>
@@ -15,6 +17,7 @@ class String:public std::string {
   String(const std::string& s):std::string(s){}
   String(int n):std::string(std::to_string(n)){}
   bool isEmpty()const{return empty();}
+  size_t length()const{return size();}
   void toLowerCase(){for(auto& c:*this)c=std::tolower(static_cast<unsigned char>(c));}
   bool endsWith(const String& suffix)const{return size()>=suffix.size()&&compare(size()-suffix.size(),suffix.size(),suffix)==0;}
   void remove(size_t pos){erase(pos);}
@@ -38,9 +41,13 @@ struct Preferences {
  size_t putString(const char* k,const String& value){auto n=put(k,value);return n?value.size():0;}
  size_t putInt(const char* k,int v){return put(k,v);}size_t putUChar(const char* k,uint8_t v){return put(k,v);}
  size_t putUShort(const char* k,uint16_t v){return put(k,v);}size_t putBool(const char* k,bool v){return put(k,v);}
+ size_t putBytes(const char* k,const void* p,size_t n){writes++;if(fail)return 0;data[k]=std::string((const char*)p,n);return n;}
+ size_t getBytesLength(const char* k){return isKey(k)?std::any_cast<std::string>(data[k]).size():0;}
+ size_t getBytes(const char* k,void* p,size_t n){if(!isKey(k))return 0;const auto& bytes=std::any_cast<std::string&>(data[k]);n=std::min(n,bytes.size());std::memcpy(p,bytes.data(),n);return n;}
  bool remove(const char* k){if(fail)return false;data.erase(k);return true;}
 } prefs;
 struct IP {String value;String toString()const{return value;}};
+struct IPAddress{bool fromString(const String& value){int a,b,c,d;char extra;return std::sscanf(value.c_str(),"%d.%d.%d.%d%c",&a,&b,&c,&d,&extra)==4&&a>=0&&a<256&&b>=0&&b<256&&c>=0&&c<256&&d>=0&&d<256;}};
 constexpr int WL_CONNECTED=3;
 struct FakeWifi {
  int connection=WL_CONNECTED,clients=0,reconnects=0;bool apClosed=false;
@@ -97,6 +104,24 @@ size_t strlcpy(char* dest,const char* src,size_t size){size_t n=strlen(src);if(s
 uint32_t lastPoll=0,lastPrinterReadAt=0;
 // FIRMWARE_FUNCTIONS
 int main(){
+ // Profile snapshot is a single blob: larger than the NVS string limit, unchanged writes skipped, failures reported.
+ Preferences profileStorage;String encoded(6000,'x'),decoded;
+ assert(writePrinterProfileBlob(profileStorage,encoded));assert(readPrinterProfileBlob(profileStorage,decoded)&&decoded==encoded);
+ int profileWrites=profileStorage.writes;assert(writePrinterProfileBlob(profileStorage,encoded));assert(profileStorage.writes==profileWrites);
+ profileStorage.fail=true;assert(!writePrinterProfileBlob(profileStorage,"changed"));assert(readPrinterProfileBlob(profileStorage,decoded)&&decoded==encoded);
+ profileStorage.fail=false;profileStorage.data["profiles"]=std::string(8193,'x');assert(!readPrinterProfileBlob(profileStorage,decoded));
+ // Validate identity and optional MAC; selecting a profile copies only that printer's own credentials.
+ PrinterProfile first;first.id="00000001";first.name="Workshop";first.type="bambu";first.ip="192.168.1.20";first.port=8883;first.serial="SERIAL01";first.secret="CODE_ONE";
+ assert(validPrinterProfile(first));first.mac="not-a-mac";assert(!validPrinterProfile(first));first.mac="AA:BB:CC:DD:EE:FF";assert(validPrinterProfile(first));
+ PrinterProfile second=first;second.id="00000002";second.name="Studio";second.ip="192.168.1.21";second.serial="SERIAL02";second.secret="CODE_TWO";
+ printerProfiles[0]=first;printerProfiles[1]=second;printerProfileCount=2;activePrinter=0;printerEnabled=true;printerConnected=true;printerFile="old-job";printerProgress=.7;
+ auto revisionBefore=printerConfigRevision;applySavedPrinter();assert(bambuAccessCode=="CODE_ONE"&&printerIP==first.ip&&!printerConnected&&printerFile.isEmpty()&&printerProgress==0&&printerConfigRevision>revisionBefore);
+ activePrinter=1;printerEnabled=true;applySavedPrinter();assert(bambuAccessCode=="CODE_TWO"&&bambuSerial=="SERIAL02"&&printerIP==second.ip);
+ assert(savedPrinterIndex("00000001")==0&&savedPrinterIndex("unknown")==-1);
+ activePrinter=-1;applySavedPrinter();assert(!printerEnabled&&printerIP.isEmpty());
+ // Restore baseline for existing network scenarios.
+ printerType="bambu";printerEnabled=true;printerIP="192.168.1.9";repaints=0;
+
  // NVS: failure must surface; empty password is a valid successfully stored value.
  Preferences storage;storage.fail=true;assert(!storeString(storage,"x","#123456"));assert(!storeInt(storage,"n",12));
  storage.fail=false;assert(storeString(storage,"x",""));int writes=storage.writes;assert(storeString(storage,"x",""));assert(storage.writes==writes);

@@ -2,7 +2,7 @@
 
 This document records requested enhancements to **LayerGlow**. Items below are **planned / to verify**, not advertised as already implemented. The firmware archive and OTA release manifest remain authoritative for released features.
 
-Last updated: 24 October 2026.
+Last updated: 25 October 2026.
 
 ## Multi-printer support
 
@@ -13,8 +13,18 @@ Last updated: 24 October 2026.
 
 ## Current status
 
-- **v2.37 is a build-tested candidate, not a confirmed hardware release.** Previously requested UI changes may be implemented in current code; check the live panel before closing the tasks below.
+- **v2.51 is the current OTA test candidate; code audit passed, but full hardware acceptance is outstanding.** Previously requested UI changes may be implemented in current code; check the live panel before closing the tasks below.
 - Keep physical OTA testing and backward compatibility checks open until verified.
+
+## Confirmed user checks (25 October 2026)
+
+- [x] Creality K2 printer discovery tested and working (reported by the project owner).
+- [x] Adding multiple saved Wi-Fi networks tested and working (reported by the project owner).
+- [ ] Test automatic Wi-Fi failover/reconnection and persistence across power cycles.
+- [ ] Test real print-state/progress, LED output and OTA/recovery on ESP32-C3 hardware.
+- [ ] Complete end-to-end hardware acceptance for v2.51.
+
+See [verification status](TEST_STATUS.md).
 
 ## Web interface and LED configuration
 

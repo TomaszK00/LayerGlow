@@ -6,4 +6,4 @@ Arduino IDE: open LayerGlow_v2_51/LayerGlow_v2_51.ino. Install ArduinoJson 7.4.3
 
 PlatformIO compilation and automated regression checks are available in GitHub Actions. Arduino IDE preprocessing/compilation and actual device installation still need validation.
 
-This is a candidate for hardware testing, not a hardware-validated stable release. Review docs/AUDIT_2026-10-25.md on candidate/v2.51 for limitations and acceptance steps. The public updater on main continues advertising v2.45.
+This is a candidate for hardware testing, not a hardware-validated stable release. Review docs/AUDIT_2026-10-25.md on candidate/v2.51 for limitations and acceptance steps. The public updater offers v2.51 when this candidate is promoted to main.

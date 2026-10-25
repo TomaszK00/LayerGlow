@@ -22,7 +22,8 @@ Last updated: 25 October 2026.
 - [x] Adding multiple saved Wi-Fi networks tested and working (reported by the project owner).
 - [ ] Test automatic Wi-Fi failover/reconnection and persistence across power cycles.
 - [ ] Test real print-state/progress, LED output and OTA/recovery on ESP32-C3 hardware.
-- [ ] Complete end-to-end hardware acceptance for v2.51.
+- [x] Owner reports stable operation from 23 October 2026 without freezes or unexpected reboots; only update-related restarts.
+- [ ] Complete end-to-end hardware acceptance for v2.51, including a measured uninterrupted soak test.
 
 See [verification status](TEST_STATUS.md).
 

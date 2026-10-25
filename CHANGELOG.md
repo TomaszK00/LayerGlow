@@ -9,7 +9,7 @@
 - Require a completed, nonempty upload before restarting. Accept uppercase .BIN filenames, bound browser requests and confirm OTA by boot identity or compatible legacy evidence.
 - Reject browser write requests with an unrecognized Host or cross-origin Origin. This is not login/authentication.
 - Add host C++ and browser regression tests plus CI checks for main, candidate branches and pull requests.
-- Keep the main OTA manifest at v2.45 pending hardware acceptance. Native colour picker and last-pair pulse semantics remain unchanged.
+- Publish v2.46 as the normal GitHub OTA test target so it can be installed from the browser. Physical hardware acceptance is still pending. Native colour picker and last-pair pulse semantics remain unchanged.
 
 ## v2.45 — test candidate (24 October 2026)
 
@@ -137,7 +137,7 @@
 
 Release descriptions are based on the README files included with the original firmware packages and on preserved repository history. They document **why each build was prepared**, not a claim that every feature was independently tested on physical hardware.
 
-**Published automatic OTA target:** v2.43 test candidate via [`Software/update.json`](Software/update.json). v2.16 is a separately archived historical build.
+**Published automatic OTA target:** v2.46 test candidate via [`Software/update.json`](Software/update.json). v2.16 is a separately archived historical build.
 
 | Version | Why it was created / main changes | Files |
 | --- | --- | --- |

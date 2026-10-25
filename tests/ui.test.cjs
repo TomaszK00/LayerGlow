@@ -95,11 +95,12 @@ test('saved printers offer selection and removal without an edit form',async()=>
   assert.equal(d.querySelector('#printerForm > h3'),null);
   assert.equal(d.querySelector('#savedPrintersHint'),null);
   assert.equal(d.querySelector('#printerSaveHint'),null);
+  assert.equal(d.querySelector('#addPrinter'),null);
+  assert.equal(d.querySelector('#printerForm button[type=submit]').getAttribute('data-i'),'savePrinter');
   assert.ok(d.querySelector('.printer-connection-head #disconnectPrinter'));
   assert.equal(d.querySelector('#printerForm #disconnectPrinter'),null);
   assert.equal(d.getElementById('profileId').value,'');
   assert.equal(p.calls.filter(c=>c.url==='/api/printers/select').length,0);
-  d.getElementById('addPrinter').click();assert.equal(d.getElementById('profileId').value,'');
   d.getElementById('printerType').value='bambu';w.eval('printerTypeChanged(true)');assert.equal(d.getElementById('bambuCode').required,true);
   await w.eval('savedPrinterAction("select","00000002")');
   assert.equal(d.getElementById('profileId').value,'');assert.equal(d.getElementById('ip').value,'');

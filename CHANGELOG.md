@@ -1,5 +1,11 @@
 # Firmware changelog
 
+## v2.51 — remove duplicate Add printer button (25 October 2026)
+
+- Remove the Add printer button and its unused handler. Save printer remains the only action to create a printer profile.
+- Update the Printer FAQ instructions in all four languages. Existing saved printers and discovery remain intact.
+
+
 ## v2.50 — printer panel cleanup (25 October 2026)
 
 - Remove Edit action and visible printer name/MAC fields; new profiles receive a type/IP name or the discovered name.

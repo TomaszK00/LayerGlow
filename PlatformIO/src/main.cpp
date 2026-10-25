@@ -34,6 +34,8 @@ constexpr uint8_t PAIR_BUTTON_PIN = 9; // BOOT on the reference ESP32-C3 SuperMi
 String adminSalt,adminHash,apPassword;
 uint8_t authFailures=0;
 uint32_t authRetryAt=0,physicalResetAt=0;
+bool restartAfterPairing=false;
+uint32_t pairButtonReleasedAt=0;
 
 // The corresponding private key is never included in firmware or the repository.
 const char OTA_PUBLIC_KEY[] = R"PEM(
@@ -1776,7 +1778,8 @@ bool requireAdmin(bool respond=true){
     if(respond)server.send(423,"text/plain","Pair this device using its physical BOOT button");
     return false;
   }
-  if((int32_t)(millis()-authRetryAt)<0){if(respond)server.send(429,"text/plain","Try again shortly");return false;}
+  if(authRetryAt&&(int32_t)(millis()-authRetryAt)<0){if(respond)server.send(429,"text/plain","Try again shortly");return false;}
+  authRetryAt=0;
   if(checkAdminCredentials()){authFailures=0;return true;}
   if(++authFailures>=8){authRetryAt=millis()+30000;authFailures=0;}
   if(respond){server.sendHeader("WWW-Authenticate","Basic realm=\"LayerGlow\", charset=\"UTF-8\"");server.send(401,"text/plain","Administrator password required");}
@@ -1833,8 +1836,8 @@ void routes(){
     String password=server.arg("adminPassword"),newAP=server.arg("apPassword");
     if(password.length()<12||password.length()>64||newAP.length()<12||newAP.length()>63){server.send(400,"text/plain","Both passwords must have at least 12 characters");return;}
     if(!saveAdminSettings(password,newAP)){server.send(500,"text/plain","Could not save credentials");return;}
-    server.send(200,"text/html; charset=utf-8","<h1>LayerGlow paired</h1><p>Saved. Device restarting. / Zapisano. Urządzenie uruchamia się ponownie.</p><p>Reconnect to LayerGlow-Setup with your new Wi-Fi password if needed; log in as admin.</p>");
-    delay(600);ESP.restart();
+    server.send(200,"text/html; charset=utf-8","<h1>LayerGlow paired</h1><p>Release BOOT to restart the device. / Puść BOOT, aby uruchomić urządzenie ponownie.</p><p>Reconnect to LayerGlow-Setup with your new Wi-Fi password if needed; log in as admin.</p>");
+    restartAfterPairing=true;pairButtonReleasedAt=0;
   });
   server.on("/api/ota/capacity",HTTP_GET,[](){if(!requireAdmin())return;JsonDocument d;const esp_partition_t* slot=esp_ota_get_next_update_partition(nullptr);d["appSlotBytes"]=slot?slot->size:0;jsonReply(200,d);});
   server.on("/api/network/info",HTTP_GET,[](){if(!requireAdmin())return;
@@ -2048,6 +2051,12 @@ void setup(){bootIdentifier=esp_random();pinMode(STATUS_LED_PIN,OUTPUT);digitalW
 void loop(){
   server.handleClient();
   uint32_t now=millis();
+  // GPIO9 is a boot strap pin: restarting while BOOT is held enters the ROM downloader.
+  if(restartAfterPairing){
+    if(digitalRead(PAIR_BUTTON_PIN)==LOW)pairButtonReleasedAt=0;
+    else if(!pairButtonReleasedAt)pairButtonReleasedAt=now;
+    else if(now-pairButtonReleasedAt>=500)ESP.restart();
+  }
   physicalAdminRecovery(now);
   maintainNetwork(now);
   maintainBambu(now);

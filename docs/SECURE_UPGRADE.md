@@ -6,7 +6,7 @@ This candidate is for controlled testing on an ESP32-C3 SuperMini. Keep a USB re
 
 1. Confirm the device runs v2.51, note its Wi-Fi IP and ensure you can press its physical **BOOT** button (GPIO9 on the reference SuperMini).
 2. Upload the v2.52 `_OTA.bin` from the existing v2.51 update page. This is the **one legacy unsigned transition**: v2.51 does not yet verify signatures. Use only a trusted network and the file from the project repository.
-3. After restart, open the device page. Enter a **new administrator password** and **a new LayerGlow-Setup Wi-Fi password**, both at least 12 characters. Hold **BOOT** while pressing Save. Write down both passwords before proceeding.
+3. After restart, open the device page. Enter a **new administrator password** and **a new LayerGlow-Setup Wi-Fi password**, both at least 12 characters. Hold **BOOT** while pressing Save, then release it; the device restarts only after you release BOOT. Write down both passwords before proceeding.
 4. The device restarts. The browser will ask for username `admin` and the new administrator password. If you need the setup AP, reconnect using the new Wi-Fi password. Saved Wi-Fi/printer and LED settings are preserved.
 5. Subsequent manual updates require **both** `_OTA.bin` and the matching `_OTA.bin.sig` file. GitHub updates use the manifest's signature automatically. A missing or invalid signature cannot activate the new firmware.
 

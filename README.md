@@ -12,7 +12,7 @@
 
 ## Verification status — 25 October 2026
 
-**Code audit: passed.** In hands-on functional checks reported by the project owner, **printer discovery works with Creality K2** and **adding multiple saved Wi-Fi networks works**. Full ESP32-C3/LED and printer-operation acceptance testing is **still pending**, including OTA/recovery, real print-progress tracking, Wi-Fi failover and long-run stability. **v2.51 remains a test candidate**, not a fully hardware-validated stable release. See [verification details](docs/TEST_STATUS.md) and the [technical audit](docs/AUDIT_2026-10-25.md).
+**Code audit: passed.** In hands-on functional checks reported by the project owner, **printer discovery works with Creality K2** and **adding multiple saved Wi-Fi networks works**. The owner also reports stable device operation since 23 October with no freezes or unintended restarts (only firmware-update restarts). Full ESP32-C3/LED and printer-operation acceptance testing is **still pending**, including OTA/recovery, real print-progress tracking, Wi-Fi failover and long-run stability. **v2.51 remains a test candidate**, not a fully hardware-validated stable release. See [verification details](docs/TEST_STATUS.md) and the [technical audit](docs/AUDIT_2026-10-25.md).
 
 ## v2.51 — one printer save action
 

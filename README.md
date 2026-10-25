@@ -10,6 +10,10 @@
 
 > **OTA test candidate: v2.51.** This release is compiled by GitHub Actions and has not yet been tested on a physical ESP32-C3 or printer. v2.48 remains available in Software/ for manual recovery; v2.16 remains archived.
 
+## Verification status — 25 October 2026
+
+**Code audit: passed.** In hands-on functional checks reported by the project owner, **printer discovery works with Creality K2** and **adding multiple saved Wi-Fi networks works**. Full ESP32-C3/LED and printer-operation acceptance testing is **still pending**, including OTA/recovery, real print-progress tracking, Wi-Fi failover and long-run stability. **v2.51 remains a test candidate**, not a fully hardware-validated stable release. See [verification details](docs/TEST_STATUS.md) and the [technical audit](docs/AUDIT_2026-10-25.md).
+
 ## v2.51 — one printer save action
 
 Remove the extra Add printer button from Saved printers. Enter printer details or select a discovery result, then use Save printer. The Printer FAQ has matching instructions in all four languages.

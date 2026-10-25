@@ -10,6 +10,14 @@
 
 > **OTA test candidate: v2.45.** This release is compiled by GitHub Actions and has not yet been tested on a physical ESP32-C3 or printer. v2.44 remains available in Software/ for rollback; v2.16 remains archived.
 
+## v2.46 audit fixes — separate test candidate
+
+The [candidate/v2.46 branch](https://github.com/TomaszK00/LayerGlow/tree/candidate/v2.46) contains connection, persistence and OTA fixes following the [25 October audit](docs/AUDIT_2026-10-25.md) / [raport po polsku](docs/AUDIT_2026-10-25_PL.md). HTTP printer reads run in a separate task; Bambu no longer leaves stale live readings after a disconnect, and recovery AP clients no longer stop saved-network retries indefinitely. Saves report storage failures and OTA confirms a new boot rather than assuming a restart after six seconds.
+
+Downloads: [v2.46 OTA binary](https://github.com/TomaszK00/LayerGlow/raw/refs/heads/candidate/v2.46/Software/LayerGlow_v2_46_OTA.bin) · [v2.46 Arduino source ZIP](https://github.com/TomaszK00/LayerGlow/raw/refs/heads/candidate/v2.46/Software/LayerGlow_v2_46.zip).
+
+The public updater on `main` continues advertising v2.45. v2.46 must be installed manually for hardware testing before promotion. The [candidate build and regression tests passed](https://github.com/TomaszK00/LayerGlow/actions/runs/40193438093). OTA: 1766592 bytes; SHA-256 `06801244c5bf4f185d869b40513a4cea19f0e3627ed5a90d49559ed44ee6e448`. This does not establish hardware stability or resolve the authentication/TLS limitations described in the audit.
+
 ## v2.45 test candidate
 
 Restore the browser's original colour picker when a LED swatch is tapped. Its eight suggested colours include the seven standard shades and the most recently chosen custom colour in place of the white suggestion. Custom colour choices are stored on the device and automatically offered for the next swatch and after a restart. The appearance and placement of suggestions depend on the browser.

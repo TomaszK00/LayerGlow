@@ -16,3 +16,7 @@ __pycache__/
 *.pyc
 
 # Keep official OTA .bin releases explicitly stored in Software/
+
+# Dependency and PlatformIO caches
+node_modules/
+.pio/

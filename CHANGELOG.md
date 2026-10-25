@@ -1,5 +1,16 @@
 # Firmware changelog
 
+## v2.46 — audit fix candidate (25 October 2026)
+
+- Run Moonraker, OctoPrint and PrusaLink HTTP reads in a worker task using immutable request/result snapshots. Discard results for an older printer/network configuration.
+- Clear stale Bambu connection state and LEDs on Wi-Fi/MQTT loss. Avoid unsigned timeout underflow when a report arrives during the MQTT loop.
+- Retry saved Wi-Fi networks every 30 seconds while a recovery phone is connected, preserving the recovery AP.
+- Verify storage writes and return errors instead of false save confirmations. Translate save/restore failures in all four UI languages.
+- Require a completed, nonempty upload before restarting. Accept uppercase .BIN filenames, bound browser requests and confirm OTA by boot identity or compatible legacy evidence.
+- Reject browser write requests with an unrecognized Host or cross-origin Origin. This is not login/authentication.
+- Add host C++ and browser regression tests plus CI checks for main, candidate branches and pull requests.
+- Keep the main OTA manifest at v2.45 pending hardware acceptance. Native colour picker and last-pair pulse semantics remain unchanged.
+
 ## v2.45 — test candidate (24 October 2026)
 
 - Revert the extra remembered-colour dialog and restore the browser's original native colour picker.

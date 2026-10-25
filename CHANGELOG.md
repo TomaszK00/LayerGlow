@@ -1,5 +1,13 @@
 # Firmware changelog
 
+## v2.47 — interface refinements (25 October 2026)
+
+- Opening brightness or pulse closes the previous LED adjustment, across all stages.
+- Rename printer reading to live printer data in all four languages and distinguish it from test states with a dot and colour.
+- Explain that Save printer persists settings across restarts, independently of Wi-Fi. No additional printer-profile manager is introduced.
+- Network, printer protocols and storage format remain unchanged.
+
+
 ## v2.46 — audit fix candidate (25 October 2026)
 
 - Run Moonraker, OctoPrint and PrusaLink HTTP reads in a worker task using immutable request/result snapshots. Discard results for an older printer/network configuration.
@@ -137,7 +145,7 @@
 
 Release descriptions are based on the README files included with the original firmware packages and on preserved repository history. They document **why each build was prepared**, not a claim that every feature was independently tested on physical hardware.
 
-**Published automatic OTA target:** v2.46 test candidate via [`Software/update.json`](Software/update.json). v2.16 is a separately archived historical build.
+**Published automatic OTA target:** v2.47 test candidate via [`Software/update.json`](Software/update.json). v2.16 is a separately archived historical build.
 
 | Version | Why it was created / main changes | Files |
 | --- | --- | --- |

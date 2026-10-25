@@ -8,6 +8,7 @@ import zipfile
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 SOURCE = (ROOT / 'PlatformIO/src/main.cpp').read_text()
+SKETCH = 'LayerGlow_v' + re.search(r'// LayerGlow v(\d+\.\d+)', SOURCE).group(1).replace('.', '_')
 
 def function(name):
     match = re.search(r'^(?:bool|void) ' + name + r'\([^\n]*\)\{', SOURCE, re.M)
@@ -24,15 +25,15 @@ def function(name):
 
 class FirmwareTests(unittest.TestCase):
     def test_arduino_mirror(self):
-        self.assertEqual(SOURCE, (ROOT / 'Arduino/LayerGlow_v2_46/LayerGlow_v2_46.ino').read_text())
+        self.assertEqual(SOURCE, (ROOT / f'Arduino/{SKETCH}/{SKETCH}.ino').read_text())
         for name in ('PubSubClient.cpp', 'PubSubClient.h'):
-            self.assertEqual((ROOT / 'PlatformIO/src/src' / name).read_bytes(), (ROOT / 'Arduino/LayerGlow_v2_46/src' / name).read_bytes())
+            self.assertEqual((ROOT / 'PlatformIO/src/src' / name).read_bytes(), (ROOT / f'Arduino/{SKETCH}/src' / name).read_bytes())
 
     def test_source_zip_matches_sketch(self):
-        with zipfile.ZipFile(ROOT / 'Software/LayerGlow_v2_46.zip') as archive:
-            self.assertEqual(SOURCE, archive.read('LayerGlow_v2_46/LayerGlow_v2_46.ino').decode())
+        with zipfile.ZipFile(ROOT / f'Software/{SKETCH}.zip') as archive:
+            self.assertEqual(SOURCE, archive.read(f'{SKETCH}/{SKETCH}.ino').decode())
             for name in ('PubSubClient.cpp', 'PubSubClient.h', 'PubSubClient-LICENSE.txt'):
-                self.assertEqual((ROOT / 'Arduino/LayerGlow_v2_46/src' / name).read_bytes(), archive.read('LayerGlow_v2_46/src/' + name))
+                self.assertEqual((ROOT / f'Arduino/{SKETCH}/src' / name).read_bytes(), archive.read(f'{SKETCH}/src/' + name))
 
     def test_connection_storage_origin_and_ota_regressions(self):
         harness = (ROOT / 'tests/firmware_harness.cpp').read_text()

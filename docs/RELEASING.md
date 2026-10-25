@@ -2,7 +2,7 @@
 
 ## Active firmware and candidate
 
-`Software/update.json` on **main** advertises v2.46 as a test candidate so existing devices can download it through the normal updater. The source and binary passed automated checks, but physical device and printer validation is still pending. The active manifest format/path remains compatible with installed devices.
+`Software/update.json` on **main** advertises v2.47 as a test candidate so existing devices can download it through the normal updater. The source and binary passed automated checks, but physical device and printer validation is still pending. The active manifest format/path remains compatible with installed devices.
 
 ## Release and acceptance checks
 

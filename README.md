@@ -3,12 +3,18 @@
 **ESP32-C3-powered LED status and progress indicator for 3D printers. Creality K2 is the documented hardware integration; other printer options in recent firmware are experimental.**
 
 ![Project status](https://img.shields.io/badge/status-development-orange)
-![Current OTA](https://img.shields.io/badge/current%20OTA-v2.48-orange)
+![Current OTA](https://img.shields.io/badge/current%20OTA-v2.50-orange)
 ![Historical archive](https://img.shields.io/badge/historical%20archive-v2.16-informational)
 ![Platform](https://img.shields.io/badge/platform-ESP32--C3-green)
 [![Repository views](https://hits.dwyl.com/TomaszK00/LayerGlow.svg?style=flat-square)](https://hits.dwyl.com/TomaszK00/LayerGlow)
 
-> **OTA test candidate: v2.48.** This release is compiled by GitHub Actions and has not yet been tested on a physical ESP32-C3 or printer. v2.47 remains available in Software/ for manual recovery; v2.16 remains archived.
+> **OTA test candidate: v2.50.** This release is compiled by GitHub Actions and has not yet been tested on a physical ESP32-C3 or printer. v2.48 remains available in Software/ for manual recovery; v2.16 remains archived.
+
+## v2.50 — simpler printer panel
+
+Saved printers offer Connect and Remove. The new-printer form no longer contains the Edit action, a visible printer name or MAC field, or repeated help text. Disconnect is next to the printer connection status. Existing names and MAC addresses on saved profiles remain visible; creating a new printer assigns a type/IP name, while discovery can provide its name. To change a saved profile, remove it and add it again. Explanations are in FAQ.
+
+Downloads: [OTA BIN](Software/LayerGlow_v2_50_OTA.bin) · [Arduino source ZIP](Software/LayerGlow_v2_50.zip).
 
 ## v2.48 — saved printers
 
@@ -30,7 +36,7 @@ The current v2.46 firmware contains connection, persistence and OTA fixes follow
 
 Downloads: [v2.46 OTA binary](Software/LayerGlow_v2_46_OTA.bin) · [v2.46 Arduino source ZIP](Software/LayerGlow_v2_46.zip).
 
-The public updater on `main` advertises v2.48 for device testing. The v2.46 audit-fix image below remains available. The [build and regression tests passed](https://github.com/TomaszK00/LayerGlow/actions/runs/40193438093). OTA: 1766592 bytes; SHA-256 `06801244c5bf4f185d869b40513a4cea19f0e3627ed5a90d49559ed44ee6e448`. This does not establish hardware stability or resolve the authentication/TLS limitations described in the audit.
+The public updater on `main` advertises v2.50 for device testing. The v2.46 audit-fix image below remains available. The [build and regression tests passed](https://github.com/TomaszK00/LayerGlow/actions/runs/40193438093). OTA: 1766592 bytes; SHA-256 `06801244c5bf4f185d869b40513a4cea19f0e3627ed5a90d49559ed44ee6e448`. This does not establish hardware stability or resolve the authentication/TLS limitations described in the audit.
 
 ## v2.45 test candidate
 
@@ -114,7 +120,8 @@ Specific functions depend on the installed firmware version. See the [change his
 
 | Item | Download |
 | --- | --- |
-| **OTA test candidate v2.48** | [LayerGlow .bin](Software/LayerGlow_v2_48_OTA.bin) |
+| **OTA test candidate v2.50** | [LayerGlow .bin](Software/LayerGlow_v2_50_OTA.bin) |
+| **Previous OTA v2.48** | [LayerGlow .bin](Software/LayerGlow_v2_48_OTA.bin) |
 | **Previous OTA v2.47** | [LayerGlow .bin](Software/LayerGlow_v2_47_OTA.bin) |
 | **Previous OTA v2.46** | [LayerGlow .bin](Software/LayerGlow_v2_46_OTA.bin) |
 | **Previous OTA v2.43** | [LayerGlow .bin](Software/LayerGlow_v2_43_OTA.bin) |
@@ -163,7 +170,7 @@ The v2.15 source and the packaged installation notes target:
 
 ## Installation
 
-**Existing installation:** use the device's built-in update page to check GitHub for **v2.48**, or choose the compatible `_OTA.bin` file manually. Do not disconnect power during the update. The OTA image is a test candidate. Devices running older firmware may still use the former repository URL; if GitHub update detection fails there, upload a recent LayerGlow OTA BIN manually once, then use the new URL for later versions.
+**Existing installation:** use the device's built-in update page to check GitHub for **v2.50**, or choose the compatible `_OTA.bin` file manually. Do not disconnect power during the update. The OTA image is a test candidate. Devices running older firmware may still use the former repository URL; if GitHub update detection fails there, upload a recent LayerGlow OTA BIN manually once, then use the new URL for later versions.
 
 **New ESP32 device:** see the [first-time installation guide](docs/INSTALLATION.md) for the historically packaged v2.3 USB image and the Arduino sketch option. USB flashing can erase saved settings and requires the correct chip/flash/partition settings. Firmware has not been retested on every possible board.
 

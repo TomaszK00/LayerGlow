@@ -80,7 +80,7 @@ test('live printer data is labelled in every language and visually distinct from
  }finally{p.dom.window.close();}
 });
 
-test('saved printers render metadata safely and keep editing separate from connection',async()=>{
+test('saved printers offer selection and removal without an edit form',async()=>{
  const status=fixture();status.savedPrinters=[
   {id:'00000001',name:'<img src=x onerror=1>',type:'bambu',ip:'192.168.1.10',port:8883,mac:'AA:BB:CC:DD:EE:FF',serial:'SERIAL01',network:'Home',hasSecret:true,active:true,enabled:true,connected:false},
   {id:'00000002',name:'Second Bambu',type:'bambu',ip:'192.168.1.11',port:8883,mac:'',serial:'SERIAL02',network:'Studio',hasSecret:true,active:false,enabled:false,connected:false}
@@ -89,16 +89,23 @@ test('saved printers render metadata safely and keep editing separate from conne
   await pause(30);const w=p.dom.window,d=w.document;await w.eval('refreshSavedPrinters()');
   const rows=d.querySelectorAll('.saved-printer');assert.equal(rows.length,2);
   assert.equal(rows[0].querySelector('img'),null);assert.match(rows[0].textContent,/AA:BB:CC:DD:EE:FF/);assert.match(rows[1].textContent,/192.168.1.11:8883/);
-  rows[1].querySelector('[data-action=edit]').click();
-  assert.equal(d.getElementById('profileId').value,'00000002');assert.equal(d.getElementById('bambuSerial').value,'SERIAL02');assert.equal(d.getElementById('bambuCode').required,false);
+  assert.equal(rows[1].querySelector('[data-action=edit]'),null);
+  assert.equal(d.querySelector('#printerName').type,'hidden');
+  assert.equal(d.querySelector('#printerMAC'),null);
+  assert.equal(d.querySelector('#printerForm > h3'),null);
+  assert.equal(d.querySelector('#savedPrintersHint'),null);
+  assert.equal(d.querySelector('#printerSaveHint'),null);
+  assert.ok(d.querySelector('.printer-connection-head #disconnectPrinter'));
+  assert.equal(d.querySelector('#printerForm #disconnectPrinter'),null);
+  assert.equal(d.getElementById('profileId').value,'');
   assert.equal(p.calls.filter(c=>c.url==='/api/printers/select').length,0);
-  d.getElementById('addPrinter').click();assert.equal(d.getElementById('profileId').value,'');assert.equal(d.getElementById('printerMAC').value,'');
+  d.getElementById('addPrinter').click();assert.equal(d.getElementById('profileId').value,'');
   d.getElementById('printerType').value='bambu';w.eval('printerTypeChanged(true)');assert.equal(d.getElementById('bambuCode').required,true);
   await w.eval('savedPrinterAction("select","00000002")');
-  assert.equal(d.getElementById('profileId').value,'00000002');assert.equal(d.getElementById('ip').value,'192.168.1.11');
+  assert.equal(d.getElementById('profileId').value,'');assert.equal(d.getElementById('ip').value,'');
   assert.equal(status.savedPrinters[1].active,true);
   await w.eval('savedPrinterAction("delete","00000001")');assert.equal(d.querySelectorAll('.saved-printer').length,1);
-  assert.equal(d.getElementById('profileId').value,'00000002');assert.deepEqual(p.errors,[]);
+  assert.equal(d.getElementById('profileId').value,'');assert.deepEqual(p.errors,[]);
  }finally{p.dom.window.close();}
 });
 

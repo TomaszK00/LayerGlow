@@ -24,7 +24,7 @@ The original Arduino sketches have been recovered from versioned ZIP packages an
 | 2.15 | [K2_Status_Light_v2_15.ino](archive/K2_Status_Light_v2_15.ino) | Original source from versioned firmware ZIP |
 | 2.16 | [K2_Status_Light_v2_16.ino](archive/K2_Status_Light_v2_16.ino) | Original source from versioned firmware ZIP (newer archived build) |
 
-**Current OTA advertised to devices: v2.48 test candidate.** The current [Arduino sketch](LayerGlow_v2_48/LayerGlow_v2_48.ino) includes its bundled PubSubClient source; v2.16 remains in the archive. [Change history](../CHANGELOG.md) documents what changed.
+**Current OTA advertised to devices: v2.50 test candidate.** The current [Arduino sketch](LayerGlow_v2_50/LayerGlow_v2_50.ino) includes its bundled PubSubClient source; v2.16 remains in the archive. [Change history](../CHANGELOG.md) documents what changed.
 
 The separate [v2.46 candidate sketch](LayerGlow_v2_46/LayerGlow_v2_46.ino) contains the audit fixes and has its own bundled MQTT sources. It is not advertised by the public updater until hardware validation.
 

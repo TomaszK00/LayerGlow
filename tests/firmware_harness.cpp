@@ -4,6 +4,7 @@
 #include <cctype>
 #include <cstdint>
 #include <cstring>
+constexpr char INITIAL_AP_PASSWORD[]="layerglowsetup";
 #include <cstdlib>
 #include <cstdio>
 #include <functional>

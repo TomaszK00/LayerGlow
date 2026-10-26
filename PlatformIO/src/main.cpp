@@ -1530,6 +1530,7 @@ void maintainNetwork(uint32_t now){
     }
     wifiLostSince=0;
     maintainMdns(now);
+    if(!apMode&&adminHash.isEmpty()&&now-lastApAttempt>=8000)startRecoveryAP();
     // Leave a minute for setup to finish, and do not disconnect an active AP client.
     if(apMode&&!adminHash.isEmpty()&&now-wifiConnectedSince>=60000&&WiFi.softAPgetStationNum()==0){
       if(WiFi.softAPdisconnect(true)){

@@ -181,6 +181,9 @@ int main(){
  WiFi.clients=0;maintainNetwork(121001);assert(!apMode&&WiFi.apClosed);
  WiFi.connection=0;lastApAttempt=1000;maintainNetwork(121002);
  maintainNetwork(129003);assert(apMode);
+ // Before administrator pairing, retry a failed setup AP even if home Wi-Fi connects.
+ WiFi.connection=WL_CONNECTED;apMode=false;adminHash="";lastApAttempt=1000;
+ maintainNetwork(140000);assert(apMode);adminHash="old-admin-hash";
  // BOOT recovery rotates the setup password, clears admin login, and leaves profiles intact.
  String savedWifi=wifiProfiles[0].name;String savedPrinter=printerIP;
  pairButtonState=LOW;physicalAdminRecovery(200000);

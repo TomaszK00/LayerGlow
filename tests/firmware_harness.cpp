@@ -50,10 +50,14 @@ struct IP {String value;String toString()const{return value;}};
 struct IPAddress{bool fromString(const String& value){int a,b,c,d;char extra;return std::sscanf(value.c_str(),"%d.%d.%d.%d%c",&a,&b,&c,&d,&extra)==4&&a>=0&&a<256&&b>=0&&b<256&&c>=0&&c<256&&d>=0&&d<256;}};
 constexpr int WL_CONNECTED=3;
 struct FakeWifi {
- int connection=WL_CONNECTED,clients=0,reconnects=0;bool apClosed=false;
+ int connection=WL_CONNECTED,clients=0,reconnects=0,scanFailures=0,scanStarts=0,scanResult=2;
+ bool apClosed=false,autoReconnect=true,connecting=false,scanRunning=false;
  int status(){return connection;}int softAPgetStationNum(){return clients;}
  bool softAPdisconnect(bool){apClosed=true;return true;}
- void scanDelete(){}void disconnect(bool){connection=0;}void reconnect(){reconnects++;}
+ void scanDelete(){scanRunning=false;}void disconnect(bool){connection=0;connecting=false;}void reconnect(){reconnects++;}
+ void setAutoReconnect(bool on){autoReconnect=on;}
+ int scanNetworks(bool,bool){scanStarts++;if(connecting||scanFailures>0){if(scanFailures>0)scanFailures--;return -2;}scanRunning=true;return -1;}
+ int scanComplete(){return scanRunning?scanResult:-2;}
  IP localIP(){return {"192.168.1.8"};}IP softAPIP(){return {"192.168.4.1"};}String macAddress(){return "01:02:03:04:05:06";}
 } WiFi;
 struct FakeMqtt {
@@ -74,8 +78,8 @@ bool printerConnected=false,printerEnabled=true,simEnabled=false,otaUploadInProg
 String printerState="standby",printerFile,lastError;float printerProgress=0;int repaints=0;void updateLEDs(){repaints++;}
 constexpr uint8_t MAX_WIFI_PROFILES=8;struct WifiProfile{String name,password;};WifiProfile wifiProfiles[8];
 uint8_t wifiProfileCount=0,activeWifi=0;String ssid,wifiPassword,webHost="layerglow";
-bool wifiScanActive=false,wifiChangePending=false,apMode=false,mdnsNeedsRestart=false;
-uint32_t wifiScanStarted=0,wifiChangeAt=0,wifiAttemptStarted=0,wifiConnectedSince=0,wifiLostSince=0,lastApAttempt=0;
+bool wifiScanActive=false,wifiScanLaunched=false,wifiChangePending=false,apMode=false,mdnsNeedsRestart=false;
+uint32_t wifiScanStarted=0,wifiScanNextTry=0,wifiScanResumeAt=0,wifiChangeAt=0,wifiAttemptStarted=0,wifiConnectedSince=0,wifiLostSince=0,lastApAttempt=0;
 void configTime(int,int,const char*,const char*){}void maintainMdns(uint32_t){}
 int profileAttempts=0;void connectWifiProfile(uint8_t index,uint32_t now){activeWifi=index;wifiAttemptStarted=now;profileAttempts++;}
 bool startRecoveryAP(){apMode=true;return true;}
@@ -143,6 +147,20 @@ int main(){
  maintainNetwork(30999);assert(profileAttempts==0);maintainNetwork(31000);assert(profileAttempts==1&&activeWifi==1);assert(!WiFi.apClosed);
  wifiProfileCount=1;wifiAttemptStarted=31000;maintainNetwork(61000);assert(WiFi.reconnects==1);
  wifiScanActive=true;wifiScanStarted=61000;maintainNetwork(62000);assert(WiFi.reconnects==1);wifiScanActive=false;
+ // Scanning while an old saved SSID is unavailable pauses connection attempts,
+ // retries a driver busy result, preserves the recovery AP and resumes afterwards.
+ WiFi.scanFailures=1;int profilesBefore=profileAttempts;int startsBefore=WiFi.scanStarts;
+ startWifiScan(100000);assert(wifiScanActive&&!WiFi.autoReconnect&&!WiFi.apClosed);
+ assert(pollWifiScan(100100)==-1&&WiFi.scanStarts==startsBefore);
+ assert(pollWifiScan(100350)==-1&&WiFi.scanStarts==startsBefore+1);
+ assert(pollWifiScan(100700)==-1&&WiFi.scanStarts==startsBefore+1);
+ assert(pollWifiScan(101100)==-1&&WiFi.scanStarts==startsBefore+2);
+ assert(pollWifiScan(101150)==2);
+ finishWifiScan(101150);assert(!wifiScanActive&&wifiScanResumeAt==101850);
+ maintainNetwork(101849);assert(!WiFi.autoReconnect&&profileAttempts==profilesBefore);
+ maintainNetwork(101850);assert(WiFi.autoReconnect&&profileAttempts==profilesBefore+1&&!WiFi.apClosed);
+ startWifiScan(200000);assert(pollWifiScan(212000)==-2&&!wifiScanActive);
+ maintainNetwork(212700);assert(WiFi.autoReconnect);
  // Bambu: Wi-Fi loss clears real reading and repaints once, preserving active simulation.
  printerConnected=true;printerState="printing";printerProgress=.5;printerFile="job.gcode";bambuMqtt.online=true;
  maintainBambu(1000);assert(!printerConnected&&printerState=="standby"&&printerFile.isEmpty()&&printerProgress==0&&repaints==1);

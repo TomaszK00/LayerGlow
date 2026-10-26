@@ -115,7 +115,8 @@ uint8_t wifiRetryCount = 0;
 bool wifiChangePending = false, otaUploadInProgress = false;
 uint32_t wifiChangeAt = 0;
 bool wifiScanActive = false, lightingBackupAvailable = false;
-uint32_t wifiScanStarted = 0;
+bool wifiScanLaunched = false;
+uint32_t wifiScanStarted = 0, wifiScanNextTry = 0, wifiScanResumeAt = 0;
 
 const char PAGE[] PROGMEM = R"HTML(
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LayerGlow by FatGiantCat</title><meta name="theme-color" content="#143b2b"><link rel="icon" type="image/svg+xml" sizes="any" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20role%3D%22img%22%20aria-label%3D%22LayerGlow%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22bg%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%3Cstop%20stop-color%3D%22%23143b2b%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%221%22%20stop-color%3D%22%230c251d%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%3CradialGradient%20id%3D%22glow%22%3E%0A%20%20%20%20%20%20%3Cstop%20stop-color%3D%22%233ef2a8%22%20stop-opacity%3D%22.45%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%221%22%20stop-color%3D%22%233ef2a8%22%20stop-opacity%3D%220%22%2F%3E%0A%20%20%20%20%3C%2FradialGradient%3E%0A%20%20%20%20%3CclipPath%20id%3D%22round%22%3E%3Crect%20x%3D%222%22%20y%3D%222%22%20width%3D%2260%22%20height%3D%2260%22%20rx%3D%2215%22%2F%3E%3C%2FclipPath%3E%0A%20%20%3C%2Fdefs%3E%0A%20%20%3Cg%20clip-path%3D%22url%28%23round%29%22%3E%0A%20%20%20%20%3Crect%20x%3D%222%22%20y%3D%222%22%20width%3D%2260%22%20height%3D%2260%22%20fill%3D%22url%28%23bg%29%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2242%22%20cy%3D%2231%22%20r%3D%2227%22%20fill%3D%22url%28%23glow%29%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%20%20%3Cpath%20d%3D%22M19%2015v31h18%22%20fill%3D%22none%22%20stroke%3D%22%23f8fff9%22%20stroke-width%3D%226%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%0A%20%20%3Crect%20x%3D%2239%22%20y%3D%2213%22%20width%3D%2210%22%20height%3D%2210%22%20rx%3D%223%22%20fill%3D%22%23ffbd45%22%2F%3E%0A%20%20%3Crect%20x%3D%2244%22%20y%3D%2227%22%20width%3D%2210%22%20height%3D%2210%22%20rx%3D%223%22%20fill%3D%22%2341dea8%22%2F%3E%0A%20%20%3Crect%20x%3D%2240%22%20y%3D%2241%22%20width%3D%2210%22%20height%3D%2210%22%20rx%3D%223%22%20fill%3D%22%234aafff%22%2F%3E%0A%3C%2Fsvg%3E">
@@ -1442,11 +1443,42 @@ void startNetwork(){
   startRecoveryAP();
   if(wifiProfileCount)connectWifiProfile(activeWifi,millis());
 }
+void finishWifiScan(uint32_t now){
+  WiFi.scanDelete();wifiScanActive=false;wifiScanLaunched=false;
+  // Resume saved-network attempts after the HTTP response has reached an AP client.
+  wifiScanResumeAt=now+700;
+}
+void startWifiScan(uint32_t now){
+  wifiScanActive=true;wifiScanLaunched=false;wifiScanStarted=now;wifiScanNextTry=now+350;
+  // Connecting to an unavailable saved network makes esp_wifi_scan_start fail.
+  WiFi.setAutoReconnect(false);
+  if(WiFi.status()!=WL_CONNECTED)WiFi.disconnect(false);
+}
+int pollWifiScan(uint32_t now){
+  if(now-wifiScanStarted>=12000){finishWifiScan(now);return -2;}
+  if(!wifiScanLaunched){
+    if((int32_t)(now-wifiScanNextTry)<0)return -1;
+    WiFi.scanDelete();
+    int result=WiFi.scanNetworks(true,true);
+    if(result==-2){wifiScanNextTry=now+750;return -1;}
+    wifiScanLaunched=true;
+    return -1;
+  }
+  int count=WiFi.scanComplete();
+  if(count==-1)return -1;
+  if(count<0){WiFi.scanDelete();wifiScanLaunched=false;wifiScanNextTry=now+750;return -1;}
+  return count;
+}
 void maintainNetwork(uint32_t now){
   if(otaUploadInProgress)return;
   if(wifiScanActive){
     if(now-wifiScanStarted<16000)return;
-    WiFi.scanDelete();wifiScanActive=false;
+    finishWifiScan(now);
+  }
+  if(wifiScanResumeAt){
+    if((int32_t)(now-wifiScanResumeAt)<0)return;
+    wifiScanResumeAt=0;WiFi.setAutoReconnect(true);
+    if(!wifiChangePending&&WiFi.status()!=WL_CONNECTED&&wifiProfileCount)connectWifiProfile(activeWifi,now);
   }
   if(wifiChangePending&&(int32_t)(now-wifiChangeAt)>=0){
     wifiChangePending=false;
@@ -1868,24 +1900,17 @@ void routes(){
     JsonDocument d;
     if(!wifiScanActive){
       if(discoveryRunning){server.send(409,"text/plain","Printer discovery in progress");return;}
-      WiFi.scanDelete();
-      // Keep the STA and rescue AP alive during an asynchronous scan.
-      int started=WiFi.scanNetworks(true,true);
-      if(started==-2){
-        d["error"]="scan_failed";jsonReply(503,d);return;
-      }
-      wifiScanActive=true;wifiScanStarted=millis();
+      startWifiScan(millis());
     }
-    int n=WiFi.scanComplete();
+    int n=pollWifiScan(millis());
     if(n==-1){d["scanning"]=true;jsonReply(200,d);return;}
-    wifiScanActive=false;
-    if(n<0){WiFi.scanDelete();d["error"]="scan_failed";jsonReply(503,d);return;}
+    if(n<0){d["error"]="scan_failed";jsonReply(503,d);return;}
     JsonArray a=d["networks"].to<JsonArray>();
     for(int i=0;i<n && i<35;i++){
       String name=WiFi.SSID(i);if(name.isEmpty())continue;
       JsonObject net=a.add<JsonObject>();net["ssid"]=name;net["rssi"]=WiFi.RSSI(i);net["secure"]=WiFi.encryptionType(i)!=WIFI_AUTH_OPEN;
     }
-    WiFi.scanDelete();d["scanning"]=false;jsonReply(200,d);
+    finishWifiScan(millis());d["scanning"]=false;jsonReply(200,d);
   });
   server.on("/api/wifi",HTTP_POST,[](){if(!allowMutation())return;
     String newSSID=server.arg("ssid");newSSID.trim();

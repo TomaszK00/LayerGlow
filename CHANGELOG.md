@@ -1,11 +1,12 @@
 # Firmware changelog
 
-## v2.52 — security candidate (25 October 2026)
+## v2.52 — security and Wi-Fi scan candidate (26 October 2026)
 
 - Require a physically authorized first pairing with an administrator password and a separate setup AP password. Limit failed login attempts and allow a 10-second physical BOOT password reset.
 - Generate a unique AP password for a new device with no saved Wi-Fi; preserve the legacy AP only during migration of an already configured device until it is paired.
 - Verify RSA-2048/SHA-256 firmware signatures on the ESP32-C3 before activating OTA. Publish BIN, SIG and signed manifest together; keep the private signer outside the repository.
 - Keep a minimal public health response so the v2.51 updater can recognize the first secured reboot. This is an untested hardware candidate; see `docs/SECURE_UPGRADE.md` before installation.
+- Pause reconnection to an unavailable saved network while scanning from the setup AP; retry a busy scan and resume saved-network attempts afterwards. This addresses the reported `scan fail` after moving the device to another Wi-Fi network.
 
 ## v2.51 — remove duplicate Add printer button (25 October 2026)
 

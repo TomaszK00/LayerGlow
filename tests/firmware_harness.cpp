@@ -184,6 +184,7 @@ int main(){
  restartAfterPairing=false;pairButtonState=LOW;physicalAdminRecovery(220000);
  physicalAdminRecovery(230000);assert(restartAfterPairing&&apPassword.length()==20);
  pairButtonState=HIGH;physicalAdminRecovery(230100);restartAfterPairing=false;
+ WiFi.connection=0;
  // Bambu: Wi-Fi loss clears real reading and repaints once, preserving active simulation.
  printerConnected=true;printerState="printing";printerProgress=.5;printerFile="job.gcode";bambuMqtt.online=true;
  maintainBambu(1000);assert(!printerConnected&&printerState=="standby"&&printerFile.isEmpty()&&printerProgress==0&&repaints==1);

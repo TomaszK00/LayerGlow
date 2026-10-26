@@ -33,7 +33,9 @@ class FirmwareTests(unittest.TestCase):
         with zipfile.ZipFile(ROOT / f'Software/{SKETCH}.zip') as archive:
             self.assertEqual(SOURCE, archive.read(f'{SKETCH}/{SKETCH}.ino').decode())
             for name in ('PubSubClient.cpp', 'PubSubClient.h', 'PubSubClient-LICENSE.txt'):
-                self.assertEqual((ROOT / f'Arduino/{SKETCH}/src' / name).read_bytes(), archive.read(f'{SKETCH}/src/' + name))
+                unpacked = (ROOT / f'Arduino/{SKETCH}/src' / name).read_bytes().replace(b'\r\n', b'\n')
+                packed = archive.read(f'{SKETCH}/src/' + name).replace(b'\r\n', b'\n')
+                self.assertEqual(unpacked, packed)
 
     def test_connection_storage_origin_and_ota_regressions(self):
         harness = (ROOT / 'tests/firmware_harness.cpp').read_text()

@@ -12,7 +12,7 @@
 
 ## v2.53 USB recovery candidate for Arduino IDE
 
-The v2.52 recovery button did not reset the setup AP password. v2.53 keeps `LayerGlow-Setup` available and adds a physical recovery path: hold BOOT for 10 seconds while firmware runs, release it, and read the new random AP password on the 115200-baud serial monitor. The administrator login resets too; saved Wi-Fi, printer and LED settings remain. Download the [Arduino IDE source ZIP](Software/LayerGlow_v2_53.zip) and follow the [Polish USB recovery guide](docs/USB_RECOVERY_V2_53.md). This candidate has not yet been tested on the physical device and is not the public OTA.
+The v2.52 recovery button did not reset the setup AP password. v2.53 adds a physical recovery path: hold BOOT for 10 seconds while firmware runs, release it, and read the new random AP password on the 115200-baud serial monitor. The administrator login resets too; saved Wi-Fi, printer and LED settings remain. The setup AP closes one minute after home Wi-Fi connects if no setup client is connected, and reopens if home Wi-Fi is lost. During administrator pairing it stays open. DHCP remains the default; each saved network can optionally use an editable static IP. The Network screen shows whether saved networks were seen in the last scan and uses the supplied LayerGlow icon and logo. Download the [Arduino IDE source ZIP](Software/LayerGlow_v2_53.zip) and follow the [Polish USB recovery guide](docs/USB_RECOVERY_V2_53.md). This candidate has not yet been tested on the physical device and is not the public OTA.
 
 ## v2.52 security candidate (not the public OTA yet)
 

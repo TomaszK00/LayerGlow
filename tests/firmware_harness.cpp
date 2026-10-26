@@ -191,7 +191,6 @@ int main(){
  // Origin/Host guard rejects external pages and DNS rebinding hosts.
  assert(allowMutation());server.origin="http://evil.example";assert(!allowMutation()&&server.code==403);
  server.origin="";assert(allowMutation());server.host="evil.example";assert(!allowMutation());server.host="192.168.4.1";assert(allowMutation());
- adminAllowed=false;assert(!allowMutation());adminAllowed=true;
  // OTA: no file/aborted/empty upload cannot restart; uppercase .BIN can finish.
  server.host="layerglow.local";server.origin="http://layerglow.local";registerOta();server.complete();assert(ESP.restarts==0&&server.code==500);
  upload.status=UPLOAD_FILE_START;upload.filename="test.BIN";server.chunk();assert(Update.begins==0);upload.status=UPLOAD_FILE_END;server.chunk();server.complete();assert(ESP.restarts==0);

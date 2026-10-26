@@ -1,0 +1,30 @@
+name: Arduino IDE v2.55 candidate
+
+on:
+  push:
+    branches: [candidate/v2.55]
+  pull_request:
+    paths:
+      - 'Arduino/LayerGlow_v2_55/**'
+      - '.github/workflows/arduino-ide-v255.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: arduino/setup-arduino-cli@v2
+      - name: Install ESP32-C3 board package
+        run: |
+          arduino-cli core update-index --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+          arduino-cli core install esp32:esp32@3.3.12 --additional-urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+      - name: Install sketch libraries
+        run: |
+          arduino-cli lib install ArduinoJson@7.4.3
+          arduino-cli lib install 'Adafruit NeoPixel@1.15.5'
+      - name: Compile the packaged Arduino sketch
+        run: arduino-cli compile --fqbn esp32:esp32:esp32c3:PartitionScheme=min_spiffs,CDCOnBoot=cdc Arduino/LayerGlow_v2_55

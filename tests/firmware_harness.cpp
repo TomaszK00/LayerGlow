@@ -91,7 +91,6 @@ int pairButtonState=HIGH;
 int digitalRead(uint8_t){return pairButtonState;}
 void esp_fill_random(void* data,size_t n){auto* bytes=(uint8_t*)data;for(size_t i=0;i<n;i++)bytes[i]=(uint8_t)i;}
 String adminHash="old-admin-hash",apPassword="old-setup-password";
-uint32_t serialPairAuthorizedUntil=0;
 uint32_t physicalResetAt=0,pairButtonReleasedAt=0;
 bool restartAfterPairing=false;
 String rowColors[6],rowExtraColors[6][11];uint8_t rowBrightness[6]={},rowColorCount[6]={},rowStyle[6]={};
@@ -203,10 +202,8 @@ int main(){
  assert(profileAttempts==recoveryAttempts&&apMode);
  // USB fallback works even if the board's BOOT input cannot be detected.
  adminHash="paired";apPassword="custom-password";restartAfterPairing=false;
- Serial.send("RESET_AP\n");maintainSerialRecovery(310000);
+ Serial.send("RESET_AP\n");maintainSerialRecovery();
  assert(adminHash.isEmpty()&&apPassword=="layerglowsetup"&&restartAfterPairing);
- restartAfterPairing=false;Serial.send("PAIR\n");maintainSerialRecovery(320000);
- assert(serialPairAuthorizedUntil==440000);
  // Bambu: Wi-Fi loss clears real reading and repaints once, preserving active simulation.
  printerConnected=true;printerState="printing";printerProgress=.5;printerFile="job.gcode";bambuMqtt.online=true;
  maintainBambu(1000);assert(!printerConnected&&printerState=="standby"&&printerFile.isEmpty()&&printerProgress==0&&repaints==1);

@@ -23,7 +23,9 @@ class SecurityTests(unittest.TestCase):
         self.assertIn('if(Update.end(true))otaImageReady=true;', SOURCE)
         self.assertIn('verifyOtaSignature(digest)', SOURCE)
         self.assertIn('if(digitalRead(PAIR_BUTTON_PIN)!=LOW)', SOURCE)
-        self.assertIn('if(digitalRead(PAIR_BUTTON_PIN)!=LOW&&!serialAuthorized)', SOURCE)
+        self.assertIn('constantTimeEqual(oldPassword,apPassword)', SOURCE)
+        self.assertIn('saveAdminSettings(newPassword,newPassword)', SOURCE)
+        self.assertNotIn('serialAuthorized', SOURCE)
         self.assertIn('if(adminHash.isEmpty()||restartAfterPairing)', SOURCE)
 
     def test_signer_rejects_wrong_key_and_tampering(self):

@@ -10,7 +10,11 @@
 
 > **OTA test candidate: v2.51.** This release is compiled by GitHub Actions and has not yet been tested on a physical ESP32-C3 or printer. v2.48 remains available in Software/ for manual recovery; v2.16 remains archived.
 
-## v2.54 USB setup recovery candidate for Arduino IDE
+## v2.55 simple password setup candidate for Arduino IDE
+
+v2.55 simplifies initial access after the owner could not complete the v2.54 BOOT/USB pairing step. While unpaired, the owner enters the current `LayerGlow-Setup` password and one new password in the setup page at `http://192.168.4.1/`. The new password protects both the setup Wi-Fi and the `admin` account. No button hold or `PAIR` USB command is required to save it. The temporary password after the v2.54 reset is `layerglowsetup`; a later BOOT hold or `RESET_AP` USB command still restores access if the chosen password is forgotten. Saved home Wi-Fi, printer and LED settings are preserved. Download the [Arduino IDE source ZIP](Software/LayerGlow_v2_55.zip) and follow the [Polish setup guide](docs/SIMPLE_SETUP_V2_55.md). This is a draft USB candidate pending physical validation, not the public OTA.
+
+## v2.54 USB setup recovery candidate for Arduino IDE (superseded)
 
 v2.53 could leave owners locked out after a BOOT reset because it generated a random setup AP password that was visible only in the USB serial output. v2.54 resets the administrator login and `LayerGlow-Setup` password once on first upgrade, uses the temporary password `layerglowsetup`, and requires new passwords during pairing. A later 10-second BOOT hold, or the `RESET_AP` USB Serial Monitor command when the board button is not detected, restores the temporary password and pairing state while preserving saved Wi-Fi, printer and LED settings. The `PAIR` USB command authorizes pairing for two minutes if the board has no usable BOOT input. Before pairing, home Wi-Fi attempts are paused and the setup AP runs alone to avoid channel changes. Download the [Arduino IDE source ZIP](Software/LayerGlow_v2_54.zip) and follow the [Polish recovery guide](docs/USB_RECOVERY_V2_54.md). This is a draft candidate pending physical validation, not the public OTA.
 

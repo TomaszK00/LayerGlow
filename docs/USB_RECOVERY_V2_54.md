@@ -1,5 +1,7 @@
 # LayerGlow v2.54: odzyskanie `LayerGlow-Setup` przez Arduino IDE
 
+**Ta instrukcja dotyczy starszej wersji.** W v2.55 ustawienie hasła nie wymaga przycisku ani Monitora portu. Zobacz [prostą instrukcję v2.55](SIMPLE_SETUP_V2_55.md).
+
 Ta wersja zastępuje v2.53, gdy nie możesz połączyć się z `LayerGlow-Setup`. Przy pierwszym uruchomieniu v2.54 po aktualizacji stare hasło sieci konfiguracyjnej i hasło administratora są resetowane **jednorazowo**. Zapisane sieci domowe, drukarki i ustawienia LED pozostają w pamięci.
 
 1. Rozpakuj `LayerGlow_v2_54_Arduino_IDE.zip`. Otwórz `LayerGlow_v2_54/LayerGlow_v2_54.ino` w Arduino IDE; folder `src` musi pozostać obok szkicu.

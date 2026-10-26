@@ -1,6 +1,7 @@
 {
-  "version": "2.51",
-  "file": "LayerGlow_v2_51_OTA.bin",
-  "size": 1811536,
-  "sha256": "3805a414f6a4036e8bcfd925c7ac93e25b5a1bcf4cff1080207838326ca8b361"
+  "version": "2.52",
+  "file": "LayerGlow_v2_52_OTA.bin",
+  "size": 1823824,
+  "sha256": "1545fa4e0477d0a9fcce305e185904e971351cb9d51ce9f24ba5033c401b259f",
+  "signature": "EgkIxRzG8pzxXwLjYmgkPtq3b3m/RjwbbKZaiGRd5yj94kVgFtwFEusCbkcJ7x0Ocep3n2JqaBvT5Gf+72QeT7p/NJjloW4J86zDhFeCoCdU5UV9qntsy+jyFpMNeU7jbdKB5bf9JydCy11zACv4SrBTboSyV4GWKSz7sk9IAUVTUgUv8Lmsm1OySD4kuHlOKAFZaxJKe7qO/PWXiBRfVgZowxmbjwLkzseDP7/azBX0gXnGoQLXNomAFycV/EI2KwmuOuQYq8Z+2LKzyrUdz8u0uCxNh3z/bft8NtvPm5N76HcEtSwfmfT/RTLPA2iTMSxnsM+eih7qJ9n/Fdi2vA=="
 }

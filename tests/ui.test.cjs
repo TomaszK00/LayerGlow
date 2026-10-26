@@ -23,7 +23,8 @@ function panel(status=fixture()){
   w.fetch=async(url,options={})=>{
    calls.push({url:String(url),options});let body={};
    if(String(url).startsWith('/api/status'))body=JSON.parse(JSON.stringify(status));
-   else if(url==='/api/printers/saved'||url==='/api/network/info')body={savedPrinters:JSON.parse(JSON.stringify(status.savedPrinters||[])),printerProfileStorageOK:true};
+   else if(url==='/api/printers/saved'||url==='/api/network/info')body={savedPrinters:JSON.parse(JSON.stringify(status.savedPrinters||[])),printerProfileStorageOK:true,...(url==='/api/network/info'?status.networkInfo||{}:{})};
+   else if(url==='/api/wifi/scan')body={scanning:false,networks:status.scanNetworks||[]};
    else if(url==='/api/printers/select'||url==='/api/printers/delete'){
     const id=new URLSearchParams(options.body.toString()).get('id');
     if(url.endsWith('/delete'))status.savedPrinters=status.savedPrinters.filter(p=>p.id!==id);
@@ -50,6 +51,22 @@ test('embedded scripts parse; all four languages cover the UI and FAQ',()=>{
   assert.deepEqual(Object.keys(T[lang]).sort(),Object.keys(T.en).sort());
   assert.deepEqual(FAQ[lang].sections.map(x=>x[1].length),FAQ.en.sections.map(x=>x[1].length));
  }
+});
+test('saved Wi-Fi availability follows the last scan and static IP fields follow the selected profile',async()=>{
+ const status=fixture();status.ssid='Home';status.networkInfo={wifi:{connected:true,ssid:'Home',ip:'192.168.1.42',gateway:'192.168.1.1',subnet:'255.255.255.0',dns:'192.168.1.1'},ap:{active:false},savedNetworks:[{index:0,ssid:'Home',connected:true,active:true,ipMode:'dhcp'},{index:1,ssid:'Studio',connected:false,active:false,ipMode:'static',staticIP:'192.168.2.42',gateway:'192.168.2.1',subnet:'255.255.255.0',dns:'192.168.2.1'}]};status.scanNetworks=[{ssid:'Home',rssi:-55,secure:true}];
+ const p=panel(status);try{
+  await pause(30);const w=p.dom.window,d=w.document;
+  await w.refreshNetworkInfo();await w.scanWifi();
+  const text=d.getElementById('savedWifiList').textContent;
+  assert.match(text,/Home.*Available now/s);assert.match(text,/Studio.*Not detected in last scan/s);
+  d.getElementById('ssid').value='Studio';w.fillWifiIPForm();
+  assert.equal(d.querySelector('input[name=ipMode]:checked').value,'static');
+  assert.equal(d.getElementById('staticIP').value,'192.168.2.42');
+  assert.equal(d.getElementById('staticFields').hidden,false);
+  d.querySelector('input[name=ipMode][value=dhcp]').click();
+  assert.equal(d.getElementById('staticFields').hidden,true);
+  assert.deepEqual(p.errors,[]);
+ }finally{p.dom.window.close();}
 });
 test('LED adjustments are exclusive and preserve their selected values',async()=>{
  const p=panel();try{
@@ -111,6 +128,8 @@ test('saved printers offer selection and removal without an edit form',async()=>
 });
 
 test('OTA needs evidence of restart and the requested version',()=>{
+ assert.equal(html.includes('id="sig" type="file"'),true);
+ assert.equal(script.includes("xhr.setRequestHeader('X-LayerGlow-Signature',signature)"),true);
  const fn=vm.runInNewContext(script.slice(script.indexOf('function firmwareRestarted('),script.indexOf('async function waitForRestart('))+'\nfirmwareRestarted');
  const before={version:'2.46',bootId:'old',uptimeSeconds:100};
  assert.equal(fn(before,{...before,uptimeSeconds:110}),false);

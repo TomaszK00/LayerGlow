@@ -1,0 +1,30 @@
+CREALITY K2 STATUS LIGHT — PERSONAL HOME USE LICENSE
+Version 1.0 — 22 October 2026
+
+Copyright (c) 2026 Tomasz Kwiatkowski. All rights reserved except as expressly granted below.
+
+1. Scope
+This license applies to new material released under these terms by the copyright holder in this repository, including source code, documentation, and original 3D design files, subject to third-party rights and prior grants. Files explicitly distributed under another license remain under that license.
+
+2. Permission for private home use
+You may download, copy, build, run, and modify covered material solely for your own private, non-commercial use at home, without payment, provided you retain copyright and license notices. You may create a physical device or 3D print for your own private household use.
+
+3. All other uses require prior written permission
+Without the copyright holder's prior written permission, you may NOT:
+- sell, rent, commercially license, or distribute devices, printed parts, software, modified versions, or other products based on covered material;
+- use covered material for business, trade, employment, paid services, or other commercial or organisational purposes;
+- redistribute, publish, sublicense or upload covered material or derivative versions to other sites or repositories, whether free or paid;
+- mass-produce, offer kits, or manufacture covered designs for other people.
+
+Permission requests should be made to the copyright holder through a suitable private contact channel. Silence does not constitute permission.
+
+4. No trademark grant
+This license grants no right to use the author's or any third party's names, trademarks or logos to imply endorsement.
+
+5. Third-party components and prior releases
+This license does not override rights in third-party libraries or other separately licensed material. In particular, versions of this project already released under the MIT License remain available to their recipients under that earlier MIT grant; applying this license prospectively does not revoke those permissions.
+
+6. No warranty; limitation of liability
+COVERED MATERIAL IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT, TO THE EXTENT PERMITTED BY LAW. TO THE EXTENT PERMITTED BY LAW, THE COPYRIGHT HOLDER SHALL NOT BE LIABLE FOR ANY CLAIM OR DAMAGES ARISING FROM ITS USE.
+
+This is a source-available, non-commercial license, NOT an Open Source Initiative-approved open-source license.

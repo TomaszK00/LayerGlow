@@ -1,0 +1,15 @@
+# LayerGlow v2.53: odzyskanie sieci przez Arduino IDE
+
+**Ta instrukcja dotyczy starszej wersji.** Dla problemu z losowym hasłem lub niewykrywanym przyciskiem użyj [v2.54](USB_RECOVERY_V2_54.md), która przywraca tymczasowe hasło `layerglowsetup` i umożliwia odzyskanie dostępu przez USB.
+
+Ta wersja służy do przywrócenia dostępu do `LayerGlow-Setup`, gdy nie da się użyć strony aktualizacji. Do wgrania potrzebny jest kabel USB z transmisją danych i komputer z Arduino IDE. Szkic znajduje się w `Arduino/LayerGlow_v2_53/LayerGlow_v2_53.ino`; folder `src` musi pozostać obok niego.
+
+1. W Arduino IDE zainstaluj pakiet płytek **esp32 by Espressif Systems** (przetestowana kompilacja z wersją **3.3.12**) oraz biblioteki **ArduinoJson 7.4.3** i **Adafruit NeoPixel 1.15.5**. Wybierz płytkę zgodną z użytym ESP32-C3 (dla referencyjnego SuperMini można użyć **ESP32C3 Dev Module**), właściwy port, **USB CDC On Boot: Enabled** oraz układ partycji **4 MB Minimal SPIFFS, 1.9 MB APP with OTA**. W ustawieniach **Erase All Flash Before Sketch Upload** wybierz **Disabled**. Kasowanie całej pamięci usuwa zapisane sieci, drukarki i ustawienia LED.
+2. Otwórz i wgraj `LayerGlow_v2_53.ino`. Po wgraniu otwórz **Serial Monitor** i ustaw **115200 baud**.
+3. Gdy program już działa, przytrzymaj fizyczny przycisk **BOOT** przez co najmniej 10 sekund. Nie trzymaj go podczas resetu ani uruchamiania. Puść przycisk; urządzenie uruchomi się ponownie.
+4. W Serial Monitor odczytaj linię `LayerGlow-Setup password: ...`. To nowe, losowe hasło. Na telefonie lub komputerze zapomnij wcześniej zapisaną sieć `LayerGlow-Setup`, połącz się z nią używając nowego hasła i otwórz **http://192.168.4.1/**. Komunikat „Brak internetu” w tej sieci jest normalny.
+5. Na stronie parowania ustaw nowe hasło administratora oraz nowe hasło `LayerGlow-Setup` (oba minimum 12 znaków). Przytrzymaj BOOT podczas zapisywania, po czym puść go. Po restarcie ponownie połącz się z `LayerGlow-Setup`, używając **hasła wybranego w tym kroku**. Do panelu zaloguj się jako `admin`.
+
+Przytrzymanie BOOT resetuje hasło administratora i hasło sieci konfiguracyjnej. Zapisane profile domowego Wi-Fi, drukarek i ustawienia LED pozostają w pamięci. Dopóki nie zakończysz ponownego parowania administratora, `LayerGlow-Setup` pozostaje włączona. Później, po połączeniu z domowym Wi-Fi, sieć konfiguracyjna wyłącza się po minucie, jeżeli nie jest do niej podłączone żadne urządzenie; po utracie domowego Wi-Fi wraca. Domyślny adres domowego Wi-Fi pochodzi z DHCP. W ekranie Sieć można dla każdej zapamiętanej sieci wybrać stały adres IP, edytować podpowiedziane wartości i potwierdzić zapis.
+
+`http://layerglow.local/` jest ogłaszany przez mDNS zarówno przy DHCP, jak i przy stałym IP. Działa tylko wtedy, gdy telefon lub komputer obsługuje mDNS i sieć nie blokuje jego ruchu. Jeśli nie działa, użyj adresu IP pokazanego w panelu lub w routerze. Jeżeli ekran Serial Monitor nie pokazuje nowego hasła albo sieć nie pojawia się po restarcie, zachowaj cały wydruk od włączenia urządzenia; wskaże, czy problem dotyczy zapisu hasła, uruchamiania AP czy zasilania. Ta ścieżka wymaga jeszcze sprawdzenia na fizycznym urządzeniu.

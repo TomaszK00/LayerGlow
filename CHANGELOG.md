@@ -1,5 +1,19 @@
 # Firmware changelog
 
+## v2.53 — Arduino IDE USB recovery candidate (26 October 2026)
+
+- Keep `LayerGlow-Setup` available while home Wi-Fi is connected and retry starting the setup AP if its initial start fails.
+- Holding BOOT for 10 seconds while firmware runs generates and prints a new random setup AP password, clears the administrator login, and restarts after BOOT is released. Saved Wi-Fi, printer and LED settings remain intact.
+- Provide an Arduino IDE source package and Polish USB recovery guide. The physical device and Arduino IDE upload still need validation; no signed v2.53 OTA is published.
+
+## v2.52 — security and Wi-Fi scan candidate (26 October 2026)
+
+- Require a physically authorized first pairing with an administrator password and a separate setup AP password. Limit failed login attempts and allow a 10-second physical BOOT password reset.
+- Generate a unique AP password for a new device with no saved Wi-Fi; preserve the legacy AP only during migration of an already configured device until it is paired.
+- Verify RSA-2048/SHA-256 firmware signatures on the ESP32-C3 before activating OTA. Publish BIN, SIG and signed manifest together; keep the private signer outside the repository.
+- Keep a minimal public health response so the v2.51 updater can recognize the first secured reboot. This is an untested hardware candidate; see `docs/SECURE_UPGRADE.md` before installation.
+- Pause reconnection to an unavailable saved network while scanning from the setup AP; retry a busy scan and resume saved-network attempts afterwards. This addresses the reported `scan fail` after moving the device to another Wi-Fi network.
+
 ## v2.51 — remove duplicate Add printer button (25 October 2026)
 
 - Remove the Add printer button and its unused handler. Save printer remains the only action to create a printer profile.

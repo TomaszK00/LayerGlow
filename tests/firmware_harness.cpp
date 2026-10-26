@@ -76,7 +76,7 @@ String printerType="bambu",printerIP="192.168.1.9",bambuIP="192.168.1.10",moonIP
 uint16_t printerPort=7125,moonPort=7125,octoPort=80,prusaPort=80;
 bool printerConnected=false,printerEnabled=true,simEnabled=false,otaUploadInProgress=false;
 String printerState="standby",printerFile,lastError;float printerProgress=0;int repaints=0;void updateLEDs(){repaints++;}
-constexpr uint8_t MAX_WIFI_PROFILES=8;struct WifiProfile{String name,password;};WifiProfile wifiProfiles[8];
+constexpr uint8_t MAX_WIFI_PROFILES=8;struct WifiProfile{String name,password,staticIP,gateway,subnet,dns;bool useStatic=false;};WifiProfile wifiProfiles[8];
 uint8_t wifiProfileCount=0,activeWifi=0;String ssid,wifiPassword,webHost="layerglow";
 bool wifiScanActive=false,wifiScanLaunched=false,wifiChangePending=false,apMode=false,mdnsNeedsRestart=false;
 uint32_t wifiScanStarted=0,wifiScanNextTry=0,wifiScanResumeAt=0,wifiChangeAt=0,wifiAttemptStarted=0,wifiConnectedSince=0,wifiLostSince=0,lastApAttempt=0;
@@ -150,6 +150,12 @@ int main(){
  prefs.beginFail=true;assert(!saveLighting());assert(!saveWifiSettings());assert(!savePrinterSettings());prefs.beginFail=false;
  prefs.fail=true;assert(!saveLighting());assert(!saveWifiSettings());assert(!savePrinterSettings());prefs.fail=false;
  assert(saveLighting());assert(saveWifiSettings());assert(savePrinterSettings());
+ wifiProfileCount=1;wifiProfiles[0].name="Workshop";wifiProfiles[0].useStatic=true;
+ wifiProfiles[0].staticIP="192.168.1.42";wifiProfiles[0].gateway="192.168.1.1";
+ wifiProfiles[0].subnet="255.255.255.0";wifiProfiles[0].dns="192.168.1.1";
+ assert(saveWifiSettings());assert(prefs.getBool("wm0",false));
+ assert(prefs.getString("wi0")=="192.168.1.42"&&prefs.getString("wg0")=="192.168.1.1");
+ assert(prefs.getString("wn0")=="255.255.255.0"&&prefs.getString("wd0")=="192.168.1.1");
  // Wi-Fi: recovery phone slows retry but no longer blocks it forever.
  WiFi.connection=0;WiFi.clients=1;apMode=true;wifiProfileCount=2;wifiLostSince=1;wifiAttemptStarted=1000;
  maintainNetwork(30999);assert(profileAttempts==0);maintainNetwork(31000);assert(profileAttempts==1&&activeWifi==1);assert(!WiFi.apClosed);
@@ -169,10 +175,12 @@ int main(){
  maintainNetwork(101850);assert(WiFi.autoReconnect&&profileAttempts==profilesBefore+1&&!WiFi.apClosed);
  startWifiScan(200000);assert(pollWifiScan(212000)==-2&&!wifiScanActive);
  maintainNetwork(212700);assert(WiFi.autoReconnect);
- // When home Wi-Fi is connected, the setup AP remains available for recovery.
- WiFi.connection=WL_CONNECTED;apMode=true;wifiConnectedSince=1000;WiFi.clients=0;
+ // An active setup client keeps AP alive; an idle AP closes after home Wi-Fi connects.
+ WiFi.connection=WL_CONNECTED;apMode=true;wifiConnectedSince=1000;WiFi.clients=1;
  maintainNetwork(121000);assert(apMode&&!WiFi.apClosed);
- apMode=false;lastApAttempt=1000;maintainNetwork(121001);assert(apMode);
+ WiFi.clients=0;maintainNetwork(121001);assert(!apMode&&WiFi.apClosed);
+ WiFi.connection=0;lastApAttempt=1000;maintainNetwork(121002);
+ maintainNetwork(129003);assert(apMode);
  // BOOT recovery rotates the setup password, clears admin login, and leaves profiles intact.
  String savedWifi=wifiProfiles[0].name;String savedPrinter=printerIP;
  pairButtonState=LOW;physicalAdminRecovery(200000);

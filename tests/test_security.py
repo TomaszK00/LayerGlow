@@ -18,15 +18,14 @@ class SecurityTests(unittest.TestCase):
         self.assertIn((ROOT / 'security/ota_public.pem').read_text().strip(), SOURCE)
         for route in ('/api/status', '/api/network/info', '/api/printers/saved',
                       '/api/printers/discovery', '/api/wifi/scan', '/api/ota/capacity'):
-            self.assertRegex(SOURCE, r'server\.on\("' + route + r'",HTTP_GET,\[\]\(\)\{if\(!requireAdmin\(\)\)return;')
-        self.assertIn('if(!requireAdmin(respond))return false;', SOURCE)
+            self.assertIn('server.on("' + route + '",HTTP_GET,[](){', SOURCE)
+        self.assertIn('if(!WiFi.softAP(AP_NAME))', SOURCE)
+        self.assertNotIn('/api/security/enroll', SOURCE)
+        self.assertNotIn('WWW-Authenticate', SOURCE)
+        self.assertNotIn('INITIAL_AP_PASSWORD', SOURCE)
+        self.assertIn('if(!local||(!origin.isEmpty()&&origin!="http://"+host))', SOURCE)
         self.assertIn('if(Update.end(true))otaImageReady=true;', SOURCE)
         self.assertIn('verifyOtaSignature(digest)', SOURCE)
-        self.assertIn('if(digitalRead(PAIR_BUTTON_PIN)!=LOW)', SOURCE)
-        self.assertIn('constantTimeEqual(oldPassword,apPassword)', SOURCE)
-        self.assertIn('saveAdminSettings(newPassword,newPassword)', SOURCE)
-        self.assertNotIn('serialAuthorized', SOURCE)
-        self.assertIn('if(adminHash.isEmpty()||restartAfterPairing)', SOURCE)
 
     def test_signer_rejects_wrong_key_and_tampering(self):
         spec = spec_from_file_location('layerglow_signer', SIGNER)

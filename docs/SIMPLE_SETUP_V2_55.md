@@ -1,5 +1,7 @@
 # LayerGlow v2.55 — proste ustawienie hasła
 
+**Ta instrukcja dotyczy starszej wersji.** Na czas testów v2.56 otwiera panel bez hasła; zobacz [instrukcję v2.56](OPEN_SETUP_TEST_V2_56.md).
+
 Ta wersja usuwa wymóg przytrzymania BOOT i wysyłania `PAIR` przy ustawianiu hasła. Zapisane sieci domowe, drukarki i ustawienia LED pozostają w pamięci.
 
 1. Rozpakuj `LayerGlow_v2_55_Arduino_IDE.zip` i otwórz `LayerGlow_v2_55/LayerGlow_v2_55.ino` w Arduino IDE. Folder `src` musi pozostać obok szkicu.

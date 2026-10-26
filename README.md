@@ -10,7 +10,11 @@
 
 > **OTA test candidate: v2.51.** This release is compiled by GitHub Actions and has not yet been tested on a physical ESP32-C3 or printer. v2.48 remains available in Software/ for manual recovery; v2.16 remains archived.
 
-## v2.55 simple password setup candidate for Arduino IDE
+## v2.56 open setup test candidate for Arduino IDE
+
+v2.56 temporarily removes the setup AP password, administrator login and first-run password page so the owner can test the board without pairing. `LayerGlow-Setup` is open and the main panel loads immediately at `http://192.168.4.1/`. Existing home Wi-Fi, printer and LED settings are preserved; stored home-network passwords remain necessary for router access. The firmware clears the old AP and administrator credentials from its separate security namespace. The AP closes after home Wi-Fi connects and no setup client is present, then reopens if home Wi-Fi is lost. Browser origin checks and signed OTA validation remain. Anyone able to reach the device can change settings in this test build. Download the [Arduino IDE ZIP](Software/LayerGlow_v2_56.zip) and follow the [Polish guide](docs/OPEN_SETUP_TEST_V2_56.md). Physical radio validation is pending; this is not the public OTA.
+
+## v2.55 simple password setup candidate for Arduino IDE (superseded)
 
 v2.55 simplifies initial access after the owner could not complete the v2.54 BOOT/USB pairing step. While unpaired, the owner enters the current `LayerGlow-Setup` password and one new password in the setup page at `http://192.168.4.1/`. The new password protects both the setup Wi-Fi and the `admin` account. No button hold or `PAIR` USB command is required to save it. The temporary password after the v2.54 reset is `layerglowsetup`; a later BOOT hold or `RESET_AP` USB command still restores access if the chosen password is forgotten. Saved home Wi-Fi, printer and LED settings are preserved. Download the [Arduino IDE source ZIP](Software/LayerGlow_v2_55.zip) and follow the [Polish setup guide](docs/SIMPLE_SETUP_V2_55.md). This is a draft USB candidate pending physical validation, not the public OTA.
 

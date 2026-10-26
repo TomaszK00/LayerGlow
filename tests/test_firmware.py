@@ -11,7 +11,7 @@ SOURCE = (ROOT / 'PlatformIO/src/main.cpp').read_text()
 SKETCH = 'LayerGlow_v' + re.search(r'// LayerGlow v(\d+\.\d+)', SOURCE).group(1).replace('.', '_')
 
 def function(name):
-    match = re.search(r'^(?:bool|void) ' + name + r'\([^\n]*\)\{', SOURCE, re.M)
+    match = re.search(r'^(?:bool|void|int) ' + name + r'\([^\n]*\)\{', SOURCE, re.M)
     if not match:
         raise AssertionError(name)
     start = match.start(); pos = SOURCE.index('{', start); depth = 0
@@ -37,7 +37,7 @@ class FirmwareTests(unittest.TestCase):
 
     def test_connection_storage_origin_and_ota_regressions(self):
         harness = (ROOT / 'tests/firmware_harness.cpp').read_text()
-        names = ('storeString','storeInt','storeByte','storePort','storeBool','removeStored','saveWifiSettings','savePrinterSettings','saveLighting','markPrinterOffline','maintainBambu','maintainNetwork','allowMutation')
+        names = ('storeString','storeInt','storeByte','storePort','storeBool','removeStored','saveWifiSettings','savePrinterSettings','saveLighting','markPrinterOffline','maintainBambu','finishWifiScan','startWifiScan','pollWifiScan','maintainNetwork','allowMutation')
         profile_start = SOURCE.index('constexpr uint8_t MAX_PRINTER_PROFILES')
         profile_end = SOURCE.index('WiFiClientSecure bambuTLS;', profile_start)
         code = SOURCE[profile_start:profile_end]

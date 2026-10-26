@@ -111,6 +111,8 @@ test('saved printers offer selection and removal without an edit form',async()=>
 });
 
 test('OTA needs evidence of restart and the requested version',()=>{
+ assert.equal(html.includes('id="sig" type="file"'),true);
+ assert.equal(script.includes("xhr.setRequestHeader('X-LayerGlow-Signature',signature)"),true);
  const fn=vm.runInNewContext(script.slice(script.indexOf('function firmwareRestarted('),script.indexOf('async function waitForRestart('))+'\nfirmwareRestarted');
  const before={version:'2.46',bootId:'old',uptimeSeconds:100};
  assert.equal(fn(before,{...before,uptimeSeconds:110}),false);

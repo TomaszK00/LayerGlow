@@ -50,10 +50,14 @@ struct IP {String value;String toString()const{return value;}};
 struct IPAddress{bool fromString(const String& value){int a,b,c,d;char extra;return std::sscanf(value.c_str(),"%d.%d.%d.%d%c",&a,&b,&c,&d,&extra)==4&&a>=0&&a<256&&b>=0&&b<256&&c>=0&&c<256&&d>=0&&d<256;}};
 constexpr int WL_CONNECTED=3;
 struct FakeWifi {
- int connection=WL_CONNECTED,clients=0,reconnects=0;bool apClosed=false;
+ int connection=WL_CONNECTED,clients=0,reconnects=0,scanFailures=0,scanStarts=0,scanResult=2;
+ bool apClosed=false,autoReconnect=true,connecting=false,scanRunning=false;
  int status(){return connection;}int softAPgetStationNum(){return clients;}
  bool softAPdisconnect(bool){apClosed=true;return true;}
- void scanDelete(){}void disconnect(bool){connection=0;}void reconnect(){reconnects++;}
+ void scanDelete(){scanRunning=false;}void disconnect(bool){connection=0;connecting=false;}void reconnect(){reconnects++;}
+ void setAutoReconnect(bool on){autoReconnect=on;}
+ int scanNetworks(bool,bool){scanStarts++;if(connecting||scanFailures>0){if(scanFailures>0)scanFailures--;return -2;}scanRunning=true;return -1;}
+ int scanComplete(){return scanRunning?scanResult:-2;}
  IP localIP(){return {"192.168.1.8"};}IP softAPIP(){return {"192.168.4.1"};}String macAddress(){return "01:02:03:04:05:06";}
 } WiFi;
 struct FakeMqtt {
@@ -74,8 +78,8 @@ bool printerConnected=false,printerEnabled=true,simEnabled=false,otaUploadInProg
 String printerState="standby",printerFile,lastError;float printerProgress=0;int repaints=0;void updateLEDs(){repaints++;}
 constexpr uint8_t MAX_WIFI_PROFILES=8;struct WifiProfile{String name,password;};WifiProfile wifiProfiles[8];
 uint8_t wifiProfileCount=0,activeWifi=0;String ssid,wifiPassword,webHost="layerglow";
-bool wifiScanActive=false,wifiChangePending=false,apMode=false,mdnsNeedsRestart=false;
-uint32_t wifiScanStarted=0,wifiChangeAt=0,wifiAttemptStarted=0,wifiConnectedSince=0,wifiLostSince=0,lastApAttempt=0;
+bool wifiScanActive=false,wifiScanLaunched=false,wifiChangePending=false,apMode=false,mdnsNeedsRestart=false;
+uint32_t wifiScanStarted=0,wifiScanNextTry=0,wifiScanResumeAt=0,wifiChangeAt=0,wifiAttemptStarted=0,wifiConnectedSince=0,wifiLostSince=0,lastApAttempt=0;
 void configTime(int,int,const char*,const char*){}void maintainMdns(uint32_t){}
 int profileAttempts=0;void connectWifiProfile(uint8_t index,uint32_t now){activeWifi=index;wifiAttemptStarted=now;profileAttempts++;}
 bool startRecoveryAP(){apMode=true;return true;}
@@ -85,17 +89,26 @@ bool rowPulse[6]={},rowEnabled[6]={};uint16_t rowPeriod[6]={};int activeLedCount
 constexpr int HTTP_POST=1,UPLOAD_FILE_START=0,UPLOAD_FILE_WRITE=1,UPLOAD_FILE_END=2,UPLOAD_FILE_ABORTED=3;
 struct HTTPUpload{int status=0;String filename;uint8_t buf[32]={};size_t currentSize=0;} upload;
 struct FakeServer{
- String host="layerglow.local",origin="http://layerglow.local",message;int code=0;std::function<void()> complete,chunk;
- String hostHeader(){return host;}String header(const char*){return origin;}
+ String host="layerglow.local",origin="http://layerglow.local",signature,message;int code=0;std::function<void()> complete,chunk;
+ String hostHeader(){return host;}String header(const char* name){return strcmp(name,"X-LayerGlow-Signature")==0?signature:origin;}
  void send(int c,const char*,const String& m){code=c;message=m;}HTTPUpload& upload(){return ::upload;}
  void on(const char*,int,std::function<void()> c,std::function<void()> h){complete=c;chunk=h;}
 } server;
 constexpr int UPDATE_SIZE_UNKNOWN=0,U_FLASH=0;
-struct {bool error=false,started=false,finished=false;int begins=0;bool hasError(){return error;}String errorString(){return "write failed";}
+struct {bool error=false,started=false,finished=false;int begins=0,ends=0;bool hasError(){return error;}String errorString(){return "write failed";}
  bool begin(int,int){begins++;started=true;return true;}size_t write(uint8_t*,size_t n){return n;}
- bool end(bool){finished=true;return true;}void abort(){started=false;finished=false;}
+ bool end(bool){ends++;finished=true;return true;}void abort(){started=false;finished=false;}
 } Update;
 bool otaImageReady=false;size_t otaBytesWritten=0;String updateError;
+bool adminAllowed=true,signatureAllowed=true,otaHashStarted=false,otaSignatureValid=false;
+bool requireAdmin(bool=true){return adminAllowed;}
+uint8_t otaSignature[256];size_t otaSignatureLength=0;
+struct mbedtls_sha256_context{} otaHash;
+void mbedtls_sha256_init(mbedtls_sha256_context*){}void mbedtls_sha256_free(mbedtls_sha256_context*){}
+void mbedtls_sha256_starts(mbedtls_sha256_context*,int){}void mbedtls_sha256_update(mbedtls_sha256_context*,const uint8_t*,size_t){}
+void mbedtls_sha256_finish(mbedtls_sha256_context*,uint8_t* digest){memset(digest,0,32);}
+int mbedtls_base64_decode(uint8_t* dst,size_t,size_t* n,const uint8_t*,size_t){memset(dst,0,256);*n=256;return 0;}
+bool verifyOtaSignature(const uint8_t*){return signatureAllowed&&otaSignatureValid&&otaSignatureLength==256;}
 struct {int restarts=0;void restart(){restarts++;}} ESP;void delay(int){}
 struct FakeQueue{std::any item;};using QueueHandle_t=FakeQueue*;constexpr int pdTRUE=1;
 template<class T>int xQueueReceive(QueueHandle_t queue,T* result,int){if(!queue->item.has_value())return 0;*result=std::any_cast<T>(queue->item);queue->item.reset();return pdTRUE;}
@@ -134,6 +147,20 @@ int main(){
  maintainNetwork(30999);assert(profileAttempts==0);maintainNetwork(31000);assert(profileAttempts==1&&activeWifi==1);assert(!WiFi.apClosed);
  wifiProfileCount=1;wifiAttemptStarted=31000;maintainNetwork(61000);assert(WiFi.reconnects==1);
  wifiScanActive=true;wifiScanStarted=61000;maintainNetwork(62000);assert(WiFi.reconnects==1);wifiScanActive=false;
+ // Scanning while an old saved SSID is unavailable pauses connection attempts,
+ // retries a driver busy result, preserves the recovery AP and resumes afterwards.
+ WiFi.scanFailures=1;int profilesBefore=profileAttempts;int startsBefore=WiFi.scanStarts;
+ startWifiScan(100000);assert(wifiScanActive&&!WiFi.autoReconnect&&!WiFi.apClosed);
+ assert(pollWifiScan(100100)==-1&&WiFi.scanStarts==startsBefore);
+ assert(pollWifiScan(100350)==-1&&WiFi.scanStarts==startsBefore+1);
+ assert(pollWifiScan(100700)==-1&&WiFi.scanStarts==startsBefore+1);
+ assert(pollWifiScan(101100)==-1&&WiFi.scanStarts==startsBefore+2);
+ assert(pollWifiScan(101150)==2);
+ finishWifiScan(101150);assert(!wifiScanActive&&wifiScanResumeAt==101850);
+ maintainNetwork(101849);assert(!WiFi.autoReconnect&&profileAttempts==profilesBefore);
+ maintainNetwork(101850);assert(WiFi.autoReconnect&&profileAttempts==profilesBefore+1&&!WiFi.apClosed);
+ startWifiScan(200000);assert(pollWifiScan(212000)==-2&&!wifiScanActive);
+ maintainNetwork(212700);assert(WiFi.autoReconnect);
  // Bambu: Wi-Fi loss clears real reading and repaints once, preserving active simulation.
  printerConnected=true;printerState="printing";printerProgress=.5;printerFile="job.gcode";bambuMqtt.online=true;
  maintainBambu(1000);assert(!printerConnected&&printerState=="standby"&&printerFile.isEmpty()&&printerProgress==0&&repaints==1);
@@ -153,9 +180,13 @@ int main(){
  // Origin/Host guard rejects external pages and DNS rebinding hosts.
  assert(allowMutation());server.origin="http://evil.example";assert(!allowMutation()&&server.code==403);
  server.origin="";assert(allowMutation());server.host="evil.example";assert(!allowMutation());server.host="192.168.4.1";assert(allowMutation());
+ adminAllowed=false;assert(!allowMutation());adminAllowed=true;
  // OTA: no file/aborted/empty upload cannot restart; uppercase .BIN can finish.
  server.host="layerglow.local";server.origin="http://layerglow.local";registerOta();server.complete();assert(ESP.restarts==0&&server.code==500);
+ upload.status=UPLOAD_FILE_START;upload.filename="test.BIN";server.chunk();assert(Update.begins==0);upload.status=UPLOAD_FILE_END;server.chunk();server.complete();assert(ESP.restarts==0);
+ server.signature=String(344,'A');
  upload.status=UPLOAD_FILE_START;upload.filename="test.BIN";server.chunk();upload.status=UPLOAD_FILE_WRITE;upload.currentSize=16;server.chunk();upload.status=UPLOAD_FILE_END;server.chunk();server.complete();assert(ESP.restarts==1&&server.code==200);
+ signatureAllowed=false;upload.status=UPLOAD_FILE_START;server.chunk();upload.status=UPLOAD_FILE_WRITE;server.chunk();upload.status=UPLOAD_FILE_END;server.chunk();server.complete();assert(ESP.restarts==1&&server.code==500&&Update.ends==1);signatureAllowed=true;
  server.complete();assert(ESP.restarts==1&&server.code==500);
  upload.status=UPLOAD_FILE_START;server.chunk();upload.status=UPLOAD_FILE_ABORTED;server.chunk();server.complete();assert(ESP.restarts==1&&!otaUploadInProgress);
  upload.status=UPLOAD_FILE_START;server.chunk();upload.status=UPLOAD_FILE_END;server.chunk();server.complete();assert(ESP.restarts==1);

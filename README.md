@@ -10,6 +10,10 @@
 
 > **OTA test candidate: v2.51.** This release is compiled by GitHub Actions and has not yet been tested on a physical ESP32-C3 or printer. v2.48 remains available in Software/ for manual recovery; v2.16 remains archived.
 
+## v2.52 security candidate (not the public OTA yet)
+
+The development candidate adds physical BOOT pairing, an administrator password, a chosen setup AP password and RSA-signed OTA verification. A fresh device generates a unique initial AP password and shows it over USB serial. This transition requires physical access to the BOOT button; read the [secure upgrade guide](docs/SECURE_UPGRADE.md) before trying it. The old v2.51 updater can install the initial candidate, but all later updates need a matching `.bin.sig` file. The candidate is not yet hardware tested and v2.51 remains the advertised update.
+
 ## Verification status — 25 October 2026
 
 **Code audit: passed.** In hands-on functional checks reported by the project owner, **printer discovery works with Creality K2** and **adding multiple saved Wi-Fi networks works**. The owner also reports stable device operation since 23 October with no freezes or unintended restarts (only firmware-update restarts). Full ESP32-C3/LED and printer-operation acceptance testing is **still pending**, including OTA/recovery, real print-progress tracking, Wi-Fi failover and long-run stability. **v2.51 remains a test candidate**, not a fully hardware-validated stable release. See [verification details](docs/TEST_STATUS.md) and the [technical audit](docs/AUDIT_2026-10-25.md).

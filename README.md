@@ -10,6 +10,10 @@
 
 > **OTA test candidate: v2.51.** This release is compiled by GitHub Actions and has not yet been tested on a physical ESP32-C3 or printer. v2.48 remains available in Software/ for manual recovery; v2.16 remains archived.
 
+## v2.53 USB recovery candidate for Arduino IDE
+
+The v2.52 recovery button did not reset the setup AP password. v2.53 keeps `LayerGlow-Setup` available and adds a physical recovery path: hold BOOT for 10 seconds while firmware runs, release it, and read the new random AP password on the 115200-baud serial monitor. The administrator login resets too; saved Wi-Fi, printer and LED settings remain. Download the [Arduino IDE source ZIP](Software/LayerGlow_v2_53.zip) and follow the [Polish USB recovery guide](docs/USB_RECOVERY_V2_53.md). This candidate has not yet been tested on the physical device and is not the public OTA.
+
 ## v2.52 security candidate (not the public OTA yet)
 
 The development candidate adds physical BOOT pairing, an administrator password, a chosen setup AP password and RSA-signed OTA verification. A fresh device generates a unique initial AP password and shows it over USB serial. This transition requires physical access to the BOOT button; read the [secure upgrade guide](docs/SECURE_UPGRADE.md) before trying it. The old v2.51 updater can install the initial candidate, but all later updates need a matching `.bin.sig` file. The candidate is not yet hardware tested and v2.51 remains the advertised update.

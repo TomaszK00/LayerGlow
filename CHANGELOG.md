@@ -1,5 +1,11 @@
 # Firmware changelog
 
+## v2.53 — Arduino IDE USB recovery candidate (26 October 2026)
+
+- Keep `LayerGlow-Setup` available while home Wi-Fi is connected and retry starting the setup AP if its initial start fails.
+- Holding BOOT for 10 seconds while firmware runs generates and prints a new random setup AP password, clears the administrator login, and restarts after BOOT is released. Saved Wi-Fi, printer and LED settings remain intact.
+- Provide an Arduino IDE source package and Polish USB recovery guide. The physical device and Arduino IDE upload still need validation; no signed v2.53 OTA is published.
+
 ## v2.52 — security and Wi-Fi scan candidate (26 October 2026)
 
 - Require a physically authorized first pairing with an administrator password and a separate setup AP password. Limit failed login attempts and allow a 10-second physical BOOT password reset.

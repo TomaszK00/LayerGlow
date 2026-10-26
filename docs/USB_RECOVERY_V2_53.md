@@ -1,0 +1,11 @@
+# LayerGlow v2.53: odzyskanie sieci przez Arduino IDE
+
+Ta wersja służy do przywrócenia dostępu do `LayerGlow-Setup`, gdy nie da się użyć strony aktualizacji. Do wgrania potrzebny jest kabel USB z transmisją danych i komputer z Arduino IDE. Szkic znajduje się w `Arduino/LayerGlow_v2_53/LayerGlow_v2_53.ino`; folder `src` musi pozostać obok niego.
+
+1. W Arduino IDE zainstaluj bibliotekę **ArduinoJson 7.4.3** i **Adafruit NeoPixel 1.15.5**. Wybierz płytkę zgodną z użytym ESP32-C3 (dla referencyjnego SuperMini można użyć **ESP32C3 Dev Module**), właściwy port oraz układ partycji **4 MB Minimal SPIFFS, 1.9 MB APP with OTA**. W ustawieniach **Erase All Flash Before Sketch Upload** wybierz **Disabled**. Kasowanie całej pamięci usuwa zapisane sieci, drukarki i ustawienia LED.
+2. Otwórz i wgraj `LayerGlow_v2_53.ino`. Po wgraniu otwórz **Serial Monitor** i ustaw **115200 baud**.
+3. Gdy program już działa, przytrzymaj fizyczny przycisk **BOOT** przez co najmniej 10 sekund. Nie trzymaj go podczas resetu ani uruchamiania. Puść przycisk; urządzenie uruchomi się ponownie.
+4. W Serial Monitor odczytaj linię `LayerGlow-Setup password: ...`. To nowe, losowe hasło. Na telefonie lub komputerze zapomnij wcześniej zapisaną sieć `LayerGlow-Setup`, połącz się z nią używając nowego hasła i otwórz **http://192.168.4.1/**. Komunikat „Brak internetu” w tej sieci jest normalny.
+5. Na stronie parowania ustaw nowe hasło administratora oraz nowe hasło `LayerGlow-Setup` (oba minimum 12 znaków). Przytrzymaj BOOT podczas zapisywania, po czym puść go. Po restarcie ponownie połącz się z `LayerGlow-Setup`, używając **hasła wybranego w tym kroku**. Do panelu zaloguj się jako `admin`.
+
+Przytrzymanie BOOT resetuje hasło administratora i hasło sieci konfiguracyjnej. Zapisane profile domowego Wi-Fi, drukarek i ustawienia LED pozostają w pamięci. Jeśli ekran Serial Monitor nie pokazuje nowego hasła albo sieć nie pojawia się po restarcie, zachowaj cały wydruk od włączenia urządzenia; wskaże, czy problem dotyczy zapisu hasła, uruchamiania AP czy zasilania. Ta ścieżka wymaga jeszcze sprawdzenia na fizycznym urządzeniu.

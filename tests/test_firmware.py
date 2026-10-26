@@ -37,7 +37,7 @@ class FirmwareTests(unittest.TestCase):
 
     def test_connection_storage_origin_and_ota_regressions(self):
         harness = (ROOT / 'tests/firmware_harness.cpp').read_text()
-        names = ('storeString','storeInt','storeByte','storePort','storeBool','removeStored','saveWifiSettings','savePrinterSettings','saveLighting','markPrinterOffline','maintainBambu','finishWifiScan','startWifiScan','pollWifiScan','maintainNetwork','allowMutation')
+        names = ('storeString','storeInt','storeByte','storePort','storeBool','removeStored','saveWifiSettings','savePrinterSettings','saveLighting','markPrinterOffline','maintainBambu','finishWifiScan','startWifiScan','pollWifiScan','maintainNetwork','rotateSetupPassword','physicalAdminRecovery','allowMutation')
         profile_start = SOURCE.index('constexpr uint8_t MAX_PRINTER_PROFILES')
         profile_end = SOURCE.index('WiFiClientSecure bambuTLS;', profile_start)
         code = SOURCE[profile_start:profile_end]

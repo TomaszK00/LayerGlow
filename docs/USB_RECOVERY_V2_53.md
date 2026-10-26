@@ -1,5 +1,7 @@
 # LayerGlow v2.53: odzyskanie sieci przez Arduino IDE
 
+**Ta instrukcja dotyczy starszej wersji.** Dla problemu z losowym hasłem lub niewykrywanym przyciskiem użyj [v2.54](USB_RECOVERY_V2_54.md), która przywraca tymczasowe hasło `layerglowsetup` i umożliwia odzyskanie dostępu przez USB.
+
 Ta wersja służy do przywrócenia dostępu do `LayerGlow-Setup`, gdy nie da się użyć strony aktualizacji. Do wgrania potrzebny jest kabel USB z transmisją danych i komputer z Arduino IDE. Szkic znajduje się w `Arduino/LayerGlow_v2_53/LayerGlow_v2_53.ino`; folder `src` musi pozostać obok niego.
 
 1. W Arduino IDE zainstaluj pakiet płytek **esp32 by Espressif Systems** (przetestowana kompilacja z wersją **3.3.12**) oraz biblioteki **ArduinoJson 7.4.3** i **Adafruit NeoPixel 1.15.5**. Wybierz płytkę zgodną z użytym ESP32-C3 (dla referencyjnego SuperMini można użyć **ESP32C3 Dev Module**), właściwy port, **USB CDC On Boot: Enabled** oraz układ partycji **4 MB Minimal SPIFFS, 1.9 MB APP with OTA**. W ustawieniach **Erase All Flash Before Sketch Upload** wybierz **Disabled**. Kasowanie całej pamięci usuwa zapisane sieci, drukarki i ustawienia LED.

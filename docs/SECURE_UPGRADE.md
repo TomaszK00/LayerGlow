@@ -1,6 +1,6 @@
 # Security candidate v2.52: pairing and signed OTA
 
-This candidate is for controlled testing on an ESP32-C3 SuperMini. Keep a USB recovery path and the previous v2.51 OTA file. A successful build does not establish physical button, radio or printer behaviour.
+This v2.52 security guide is historical. For USB recovery after v2.53, follow [v2.54 recovery](USB_RECOVERY_V2_54.md), which uses a temporary known AP password and USB Serial Monitor fallback. A successful build does not establish physical button, radio or printer behaviour.
 
 ## Upgrade an existing device
 

@@ -23,6 +23,8 @@ class SecurityTests(unittest.TestCase):
         self.assertIn('if(Update.end(true))otaImageReady=true;', SOURCE)
         self.assertIn('verifyOtaSignature(digest)', SOURCE)
         self.assertIn('if(digitalRead(PAIR_BUTTON_PIN)!=LOW)', SOURCE)
+        self.assertIn('if(digitalRead(PAIR_BUTTON_PIN)!=LOW&&!serialAuthorized)', SOURCE)
+        self.assertIn('if(adminHash.isEmpty()||restartAfterPairing)', SOURCE)
 
     def test_signer_rejects_wrong_key_and_tampering(self):
         spec = spec_from_file_location('layerglow_signer', SIGNER)

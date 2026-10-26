@@ -83,13 +83,14 @@ uint32_t wifiScanStarted=0,wifiScanNextTry=0,wifiScanResumeAt=0,wifiChangeAt=0,w
 void configTime(int,int,const char*,const char*){}void maintainMdns(uint32_t){}
 int profileAttempts=0;void connectWifiProfile(uint8_t index,uint32_t now){activeWifi=index;wifiAttemptStarted=now;profileAttempts++;}
 bool startRecoveryAP(){apMode=true;return true;}
-struct {template<class T>void println(T){}} Serial;
+struct FakeSerial {std::string input;size_t offset=0;template<class T>void println(T){}int available(){return int(input.size()-offset);}int read(){return offset<input.size()?(unsigned char)input[offset++]:-1;}void send(const std::string& value){input=value;offset=0;}} Serial;
 constexpr uint8_t PAIR_BUTTON_PIN=9;
 constexpr int LOW=0,HIGH=1;
 int pairButtonState=HIGH;
 int digitalRead(uint8_t){return pairButtonState;}
 void esp_fill_random(void* data,size_t n){auto* bytes=(uint8_t*)data;for(size_t i=0;i<n;i++)bytes[i]=(uint8_t)i;}
 String adminHash="old-admin-hash",apPassword="old-setup-password";
+uint32_t serialPairAuthorizedUntil=0;
 uint32_t physicalResetAt=0,pairButtonReleasedAt=0;
 bool restartAfterPairing=false;
 String rowColors[6],rowExtraColors[6][11];uint8_t rowBrightness[6]={},rowColorCount[6]={},rowStyle[6]={};
@@ -184,18 +185,27 @@ int main(){
  // Before administrator pairing, retry a failed setup AP even if home Wi-Fi connects.
  WiFi.connection=WL_CONNECTED;apMode=false;adminHash="";lastApAttempt=1000;
  maintainNetwork(140000);assert(apMode);adminHash="old-admin-hash";
- // BOOT recovery rotates the setup password, clears admin login, and leaves profiles intact.
+ // BOOT recovery restores a temporary password, clears admin login, and leaves profiles intact.
  String savedWifi=wifiProfiles[0].name;String savedPrinter=printerIP;
  pairButtonState=LOW;physicalAdminRecovery(200000);
  physicalAdminRecovery(209999);assert(!restartAfterPairing&&apPassword=="old-setup-password");
  physicalAdminRecovery(210000);assert(restartAfterPairing&&adminHash.isEmpty());
- assert(apPassword.length()==20&&apPassword!="old-setup-password");
+ assert(apPassword=="layerglowsetup");
  assert(wifiProfiles[0].name==savedWifi&&printerIP==savedPrinter);
  pairButtonState=HIGH;physicalAdminRecovery(210100);assert(physicalResetAt==0);
  restartAfterPairing=false;pairButtonState=LOW;physicalAdminRecovery(220000);
- physicalAdminRecovery(230000);assert(restartAfterPairing&&apPassword.length()==20);
+ physicalAdminRecovery(230000);assert(restartAfterPairing&&apPassword=="layerglowsetup");
  pairButtonState=HIGH;physicalAdminRecovery(230100);restartAfterPairing=false;
  WiFi.connection=0;
+ // Recovery isolates the setup AP and pauses all saved home-network attempts.
+ int recoveryAttempts=profileAttempts;wifiAttemptStarted=1;maintainNetwork(300000);
+ assert(profileAttempts==recoveryAttempts&&apMode);
+ // USB fallback works even if the board's BOOT input cannot be detected.
+ adminHash="paired";apPassword="custom-password";restartAfterPairing=false;
+ Serial.send("RESET_AP\n");maintainSerialRecovery(310000);
+ assert(adminHash.isEmpty()&&apPassword=="layerglowsetup"&&restartAfterPairing);
+ restartAfterPairing=false;Serial.send("PAIR\n");maintainSerialRecovery(320000);
+ assert(serialPairAuthorizedUntil==440000);
  // Bambu: Wi-Fi loss clears real reading and repaints once, preserving active simulation.
  printerConnected=true;printerState="printing";printerProgress=.5;printerFile="job.gcode";bambuMqtt.online=true;
  maintainBambu(1000);assert(!printerConnected&&printerState=="standby"&&printerFile.isEmpty()&&printerProgress==0&&repaints==1);

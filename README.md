@@ -10,7 +10,11 @@
 
 > **OTA test candidate: v2.51.** This release is compiled by GitHub Actions and has not yet been tested on a physical ESP32-C3 or printer. v2.48 remains available in Software/ for manual recovery; v2.16 remains archived.
 
-## v2.53 USB recovery candidate for Arduino IDE
+## v2.54 USB setup recovery candidate for Arduino IDE
+
+v2.53 could leave owners locked out after a BOOT reset because it generated a random setup AP password that was visible only in the USB serial output. v2.54 resets the administrator login and `LayerGlow-Setup` password once on first upgrade, uses the temporary password `layerglowsetup`, and requires new passwords during pairing. A later 10-second BOOT hold, or the `RESET_AP` USB Serial Monitor command when the board button is not detected, restores the temporary password and pairing state while preserving saved Wi-Fi, printer and LED settings. The `PAIR` USB command authorizes pairing for two minutes if the board has no usable BOOT input. Before pairing, home Wi-Fi attempts are paused and the setup AP runs alone to avoid channel changes. Download the [Arduino IDE source ZIP](Software/LayerGlow_v2_54.zip) and follow the [Polish recovery guide](docs/USB_RECOVERY_V2_54.md). This is a draft candidate pending physical validation, not the public OTA.
+
+## v2.53 USB recovery candidate for Arduino IDE (superseded)
 
 The v2.52 recovery button did not reset the setup AP password. v2.53 adds a physical recovery path: hold BOOT for 10 seconds while firmware runs, release it, and read the new random AP password on the 115200-baud serial monitor. The administrator login resets too; saved Wi-Fi, printer and LED settings remain. The setup AP closes one minute after home Wi-Fi connects if no setup client is connected, and reopens if home Wi-Fi is lost. During administrator pairing it stays open. DHCP remains the default; each saved network can optionally use an editable static IP. The Network screen shows whether saved networks were seen in the last scan and uses the supplied LayerGlow icon and logo. Download the [Arduino IDE source ZIP](Software/LayerGlow_v2_53.zip) and follow the [Polish USB recovery guide](docs/USB_RECOVERY_V2_53.md). This candidate has not yet been tested on the physical device and is not the public OTA.
 
